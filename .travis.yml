@@ -9,7 +9,6 @@ env:
   - PUPPET_VERSION=2.7.17
   - PUPPET_VERSION=2.7.13
   - PUPPET_VERSION=2.7.9
-  - PUPPET_VERSION=2.6.9
 notifications:
   email: false
 gemfile: .gemfile
