@@ -1,5 +1,7 @@
 # createrepo module #
 
+[![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
+
 This is module creates yum repositories and metadata caches.
 It also manages a cronjob to update the repodata.
 
