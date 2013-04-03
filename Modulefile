@@ -1,0 +1,8 @@
+name    'pallvalmundsson-createrepo'
+version '0.9.0'
+source 'https://github.com/pall-valmundsson/puppet-createrepo.git'
+author 'pallvalmundsson'
+license 'GPLv3'
+summary 'Manages creation of yum repositories'
+description 'Creates yum repositories and installs cron jobs to update metadata.'
+project_page 'https://github.com/pall-valmundsson/puppet-createrepo'
