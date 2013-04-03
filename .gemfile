@@ -1,0 +1,4 @@
+source :rubygems
+
+gem 'puppetlabs_spec_helper', '>= 0.4.1'
+gem 'puppet-lint', '>= 0.3.2'
