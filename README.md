@@ -2,11 +2,26 @@
 
 [![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
 
+# What it is and what it isn't #
+
 This is module creates yum repositories and metadata caches.
 It also manages a cronjob to update the repodata.
 
+It *doesn't*:
+- manage the directoy tree up to the root of the repository
+- manage a HTTP server for repository clients
+
+# Example #
+
+```
+createrepo { 'yumrepo':
+    repository_dir => '/var/yumrepos/yumrepo',
+    repo_cache_dir => '/var/cache/yumrepos/yumrepo'
+}
+```
+
 # Status #
-Beta. Works on CentOS/RHEL 6 with Puppet 2.7.
+Beta. Tested on CentOS/RHEL 6 with Puppet 2.7.
 
 # Parameters #
 
@@ -43,13 +58,4 @@ Hour parameter for cron metadata update job.
 - *Default*: ```*```
 
 
-Example
--------
-```
-createrepo { 'yumrepo':
-    repository_dir => '/var/yumrepos/yumrepo',
-    repo_cache_dir => '/var/cache/yumrepos/yumrepo'
-}
-```
-
-Please log tickets and issues at our [Projects site](https://github.com/pall-valmundsson/puppet-createrepo)
+Please log tickets and issues at the [projects site](https://github.com/pall-valmundsson/puppet-createrepo)
