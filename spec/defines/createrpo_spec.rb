@@ -61,6 +61,14 @@ describe 'createrepo', :type => :define do
                         'minute'  => param_hash[:cron_minute],
                         'hour'    => param_hash[:cron_hour],
                     })
+
+                    should contain_exec("createrepo #{title} in #{param_hash[:repository_dir]}").with({
+                        'command' => "createrepo --database --changelog-limit 5 --cachedir #{param_hash[:repo_cache_dir]} #{param_hash[:repository_dir]}",
+                        'user'    => param_hash[:repo_owner],
+                        'group'   => param_hash[:repo_group],
+                        'creates' => "#{param_hash[:repository_dir]}/repodata",
+                        'require' => ['Package[createrepo]', "File[#{param_hash[:repository_dir]}]"]
+                    })
                 end
             end
         end
