@@ -74,7 +74,7 @@ define createrepo (
     $createrepo_exec_name = "createrepo ${name} in ${repository_dir}"
 
     exec { $createrepo_exec_name:
-        command => "createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} ${repository_dir}",
+        command => "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} ${repository_dir}",
         require => [ Package['createrepo'], File[$repository_dir] ],
         user    => $repo_owner,
         group   => $repo_group,

@@ -63,7 +63,7 @@ describe 'createrepo', :type => :define do
                     })
 
                     should contain_exec("createrepo #{title} in #{param_hash[:repository_dir]}").with({
-                        'command' => "createrepo --database --changelog-limit 5 --cachedir #{param_hash[:repo_cache_dir]} #{param_hash[:repository_dir]}",
+                        'command' => "/usr/bin/createrepo --database --changelog-limit 5 --cachedir #{param_hash[:repo_cache_dir]} #{param_hash[:repository_dir]}",
                         'user'    => param_hash[:repo_owner],
                         'group'   => param_hash[:repo_group],
                         'creates' => "#{param_hash[:repository_dir]}/repodata",
