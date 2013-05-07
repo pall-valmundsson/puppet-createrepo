@@ -64,5 +64,9 @@ cron_hour
 Hour parameter for cron metadata update job.
 - *Default*: ```*```
 
+checksum_type
+-------------
+Sets the checksum type for repomd.xml. This needs to be set to ```sha``` if ```createrepo``` is defined on a RHEL/CentOS 6 host and is accessed by RHEL/CentOS 5 or earlier clients.
+- *Default*: ```undef```
 
-Please log tickets and issues at the [projects site](https://github.com/pall-valmundsson/puppet-createrepo)
+Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)
