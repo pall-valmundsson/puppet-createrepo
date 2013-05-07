@@ -24,6 +24,9 @@
 # [*cron_hour*]
 #   Hour parameter for cron metadata update job. Default: '*'
 #
+# [*checksum_type*]
+#   For compatibility with older versions of yum.
+#
 # === Variables
 #
 # None.
@@ -50,6 +53,7 @@ define createrepo (
     $repo_group     = 'root',
     $cron_minute    = '*/1',
     $cron_hour      = '*',
+    $checksum_type  = undef,
 ) {
     file { $repository_dir:
         ensure => directory,
@@ -71,10 +75,18 @@ define createrepo (
         }
     }
 
-    $createrepo_exec_name = "createrepo ${name} in ${repository_dir}"
+    if $checksum_type {
+        $createrepo_exec_name = "createrepo ${name} in ${repository_dir} using ${checksum_type} checksums"
+        $createrepo_exec_cmd  = "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} --checksum ${checksum_type} ${repository_dir}"
+        $createrepo_cron_cmd  = "/usr/bin/createrepo --update --cachedir ${repo_cache_dir} --checksum ${checksum_type} ${repository_dir}"
+    } else {
+        $createrepo_exec_name = "createrepo ${name} in ${repository_dir}"
+        $createrepo_exec_cmd  = "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} ${repository_dir}"
+        $createrepo_cron_cmd  = "/usr/bin/createrepo --update --cachedir ${repo_cache_dir} ${repository_dir}"
+    }
 
     exec { $createrepo_exec_name:
-        command => "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} ${repository_dir}",
+        command => $createrepo_exec_cmd,
         require => [ Package['createrepo'], File[$repository_dir] ],
         user    => $repo_owner,
         group   => $repo_group,
@@ -82,7 +94,7 @@ define createrepo (
     }
 
     cron { "update-createrepo-${name}":
-        command => "/usr/bin/createrepo --update --cachedir ${repo_cache_dir} ${repository_dir}",
+        command => $createrepo_cron_cmd,
         user    => $repo_owner,
         minute  => $cron_minute,
         hour    => $cron_hour,

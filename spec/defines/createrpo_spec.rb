@@ -17,6 +17,7 @@ describe 'createrepo', :type => :define do
             :repo_group     => 'root',
             :cron_minute    => '*/1',
             :cron_hour      => '0',
+            :checksum_type  => nil,
         }
         end
 
@@ -27,6 +28,7 @@ describe 'createrepo', :type => :define do
             :repo_group     => 'yum',
             :cron_minute    => '10',
             :cron_hour      => '1',
+            :checksum_type  => 'sha1',
          },
         ].each do |param_set|
 
@@ -56,14 +58,16 @@ describe 'createrepo', :type => :define do
                     })
     
                     should contain_cron("update-createrepo-#{title}").with({
-                        'command' => "/usr/bin/createrepo --update --cachedir #{param_hash[:repo_cache_dir]} #{param_hash[:repository_dir]}",
+                        'command' => "/usr/bin/createrepo --update --cachedir #{param_hash[:repo_cache_dir]} "\
+                            "#{param_hash[:checksum_type] == nil ? "" : "--checksum #{param_hash[:checksum_type]}"} #{param_hash[:repository_dir]}",
                         'user'    => param_hash[:repo_owner],
                         'minute'  => param_hash[:cron_minute],
                         'hour'    => param_hash[:cron_hour],
                     })
 
-                    should contain_exec("createrepo #{title} in #{param_hash[:repository_dir]}").with({
-                        'command' => "/usr/bin/createrepo --database --changelog-limit 5 --cachedir #{param_hash[:repo_cache_dir]} #{param_hash[:repository_dir]}",
+                    should contain_exec("createrepo #{title} in #{param_hash[:repository_dir]} #{param_hash[:checksum_type] == nil ? "" : "using #{param_hash[:checksum_type]} checksums"}").with({
+                        'command' => "/usr/bin/createrepo --database --changelog-limit 5 --cachedir #{param_hash[:repo_cache_dir]} "\
+                            "#{param_hash[:checksum_type] == nil ? "" : "--checksum #{param_hash[:checksum_type]}"} #{param_hash[:repository_dir]}",
                         'user'    => param_hash[:repo_owner],
                         'group'   => param_hash[:repo_group],
                         'creates' => "#{param_hash[:repository_dir]}/repodata",
