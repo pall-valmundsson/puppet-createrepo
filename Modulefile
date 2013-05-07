@@ -1,5 +1,5 @@
 name    'palli-createrepo'
-version '0.9.2'
+version '0.9.3'
 source 'https://github.com/pall-valmundsson/puppet-createrepo.git'
 author 'Pall Valmundsson'
 license 'GPLv3'
