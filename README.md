@@ -26,7 +26,9 @@ Beta. Tested on CentOS/RHEL 6 with Puppet 2.7.
 # Regarding checksums #
 Older versions of yum do not support some later default checksum types. From the ```createrepo``` man page:
 ```
-Choose  the  checksum  type used in repomd.xml and for packages in the metadata.  The default is now "sha256" (if python has hashlib). The older default was "sha", which is actually "sha1", however explicitly using "sha1" doesn’t work on older (3.0.x) versions of yum, you need to specify "sha".
+Choose  the  checksum  type used in repomd.xml and for packages in the metadata.  The default is now
+"sha256" (if python has hashlib). The older default was "sha", which is actually "sha1", however explicitly
+using "sha1" doesn’t work on older (3.0.x) versions of yum, you need to specify "sha".
 ```
 ```createrepo``` provides a checksum_type parameter to change the checksum type.
 
@@ -69,4 +71,5 @@ checksum_type
 Sets the checksum type for repomd.xml. This needs to be set to ```sha``` if ```createrepo``` is defined on a RHEL/CentOS 6 host and is accessed by RHEL/CentOS 5 or earlier clients.
 - *Default*: ```undef```
 
+# Issues #
 Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)
