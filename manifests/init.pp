@@ -18,11 +18,18 @@
 # [*repo_group*]
 #   Group of the repository directory. Default: 'root'
 #
+# [*enable_cron*]
+#   Enable automatic repository updates by cron. If disabled,
+#   Puppet will update repository on each run. Default: true
+#
 # [*cron_minute*]
 #   Minute parameter for cron metadata update job. Default: '*/1'
 #
 # [*cron_hour*]
 #   Hour parameter for cron metadata update job. Default: '*'
+#
+# [*changelog_limit*]
+#   Import only last N changelog entries from rpm into metadata. Default: 5
 #
 # [*checksum_type*]
 #   For compatibility with older versions of yum.
@@ -47,22 +54,17 @@
 # Copyright 2012, 2013 Pall Valmundsson, unless otherwise noted.
 #
 define createrepo (
-    $repository_dir = "/var/yumrepos/${name}",
-    $repo_cache_dir = "/var/cache/yumrepos/${name}",
-    $repo_owner     = 'root',
-    $repo_group     = 'root',
-    $cron_minute    = '*/1',
-    $cron_hour      = '*',
-    $checksum_type  = undef,
+    $repository_dir  = "/var/yumrepos/${name}",
+    $repo_cache_dir  = "/var/cache/yumrepos/${name}",
+    $repo_owner      = 'root',
+    $repo_group      = 'root',
+    $enable_cron     = true,
+    $cron_minute     = '*/1',
+    $cron_hour       = '*',
+    $changelog_limit = 5,
+    $checksum_type   = undef,
 ) {
-    file { $repository_dir:
-        ensure => directory,
-        owner  => $repo_owner,
-        group  => $repo_group,
-        mode   => '0775',
-    }
-
-    file { $repo_cache_dir:
+    file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
         owner  => $repo_owner,
         group  => $repo_group,
@@ -75,28 +77,49 @@ define createrepo (
         }
     }
 
-    if $checksum_type {
-        $createrepo_exec_name = "createrepo ${name} in ${repository_dir} using ${checksum_type} checksums"
-        $createrepo_exec_cmd  = "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} --checksum ${checksum_type} ${repository_dir}"
-        $createrepo_cron_cmd  = "/usr/bin/createrepo --update --cachedir ${repo_cache_dir} --checksum ${checksum_type} ${repository_dir}"
+    if $changelog_limit =~ /^\d+$/ {
+        $_arg_changelog = " --changelog-limit ${changelog_limit}"
     } else {
-        $createrepo_exec_name = "createrepo ${name} in ${repository_dir}"
-        $createrepo_exec_cmd  = "/usr/bin/createrepo --database --changelog-limit 5 --cachedir ${repo_cache_dir} ${repository_dir}"
-        $createrepo_cron_cmd  = "/usr/bin/createrepo --update --cachedir ${repo_cache_dir} ${repository_dir}"
+        $_arg_changelog = ''
     }
 
-    exec { $createrepo_exec_name:
-        command => $createrepo_exec_cmd,
-        require => [ Package['createrepo'], File[$repository_dir] ],
+    if $checksum_type {
+        $_arg_checksum = " --checksum ${checksum_type}"
+    } else {
+        $_arg_checksum = ''
+    }
+
+    $cmd = '/usr/bin/createrepo'
+    $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}"
+    $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
+    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+
+    exec { "createrepo-${name}":
+        command => $createrepo_create,
         user    => $repo_owner,
         group   => $repo_group,
         creates => "${repository_dir}/repodata",
+        require => [
+            Package['createrepo'],
+            File[$repository_dir],
+            File[$repo_cache_dir],
+        ],
     }
 
-    cron { "update-createrepo-${name}":
-        command => $createrepo_cron_cmd,
-        user    => $repo_owner,
-        minute  => $cron_minute,
-        hour    => $cron_hour,
+    if $enable_cron == true {
+        cron { "update-createrepo-${name}":
+            command => $createrepo_update,
+            user    => $repo_owner,
+            minute  => $cron_minute,
+            hour    => $cron_hour,
+            require => Exec["createrepo-${name}"],
+        }
+    } else {
+        exec { "update-createrepo-${name}":
+            command => $createrepo_update,
+            user    => $repo_owner,
+            group   => $repo_group,
+            require => Exec["createrepo-${name}"],
+        }
     }
 }

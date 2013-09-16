@@ -60,6 +60,12 @@ Group of the repository directory.
 
 - *Default*: ```root```
 
+enable_cron
+-----------
+Enable regular repository updates via cron or Puppet.
+
+- *Default*: ```true```
+
 cron_minute
 -----------
 Minute parameter for cron metadata update job.
@@ -71,6 +77,12 @@ cron_hour
 Hour parameter for cron metadata update job.
 
 - *Default*: ```*```
+
+changelog_limit
+---------------
+Number of changelog entries to import into metadata.
+
+- *Default*: ```5```
 
 checksum_type
 -------------
