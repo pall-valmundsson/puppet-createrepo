@@ -77,16 +77,25 @@ define createrepo (
         }
     }
 
-    if $changelog_limit =~ /^\d+$/ {
-        $_arg_changelog = " --changelog-limit ${changelog_limit}"
-    } else {
-        $_arg_changelog = ''
-    }
+    case $::osfamily {
+        'RedHat':{
+            if $changelog_limit =~ /^\d+$/ {
+                $_arg_changelog = " --changelog-limit ${changelog_limit}"
+            } else {
+                $_arg_changelog = ''
+            }
 
-    if $checksum_type {
-        $_arg_checksum = " --checksum ${checksum_type}"
-    } else {
-        $_arg_checksum = ''
+            if $checksum_type {
+                $_arg_checksum = " --checksum ${checksum_type}"
+            } else {
+                $_arg_checksum = ''
+            }
+        }
+        default:{
+            # createrepo distributed with some OS don't have these options
+            $_arg_checksum  = ''
+            $_arg_changelog = ''
+        }
     }
 
     $cmd = '/usr/bin/createrepo'
