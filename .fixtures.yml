@@ -1,3 +1,3 @@
 fixtures:
     symlinks:
-        createrepo: #{source_dir}
+        "createrepo": "#{source_dir}"

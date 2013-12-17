@@ -1,0 +1,4 @@
+2013-17-12 - Version 0.9.4
+* Repo update cronjob made optional (Vlastimil Holer)
+* changelog_limit made optional (Vlastimil Holer)
+* Rudimentary Debian support (Aaron Hicks)

@@ -2,3 +2,5 @@
 bundle/
 Gemfile.lock
 .rspec_system/
+pkg/
+spec/fixtures
