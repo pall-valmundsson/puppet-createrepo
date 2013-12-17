@@ -15,5 +15,18 @@ describe 'createrepo define:' do
       its(:stderr) { should be_empty }
       its(:exit_code) { should be_zero }
     end
+
+    describe file('/var/yumrepos/test-repo/repodata') do
+      it { should be_directory }
+    end
+
+    describe cron do
+      if node.facts['osfamily'] != 'RedHat'
+        it { should have_entry('*/1 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo').with_user('root') }
+      else
+        it { should have_entry('*/1 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo').with_user('root') }
+      end
+    end
+
   end
 end
