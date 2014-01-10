@@ -80,26 +80,26 @@ define createrepo (
     case $::osfamily {
         'RedHat':{
             if $changelog_limit =~ /^\d+$/ {
-                $_arg_changelog = " --changelog-limit ${changelog_limit}"
+                $arg_changelog = " --changelog-limit ${changelog_limit}"
             } else {
-                $_arg_changelog = ''
+                $arg_changelog = ''
             }
 
             if $checksum_type {
-                $_arg_checksum = " --checksum ${checksum_type}"
+                $arg_checksum = " --checksum ${checksum_type}"
             } else {
-                $_arg_checksum = ''
+                $arg_checksum = ''
             }
         }
         default:{
             # createrepo distributed with some OS don't have these options
-            $_arg_checksum  = ''
-            $_arg_changelog = ''
+            $arg_checksum  = ''
+            $arg_changelog = ''
         }
     }
 
     $cmd = '/usr/bin/createrepo'
-    $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}"
+    $arg = "--cachedir ${repo_cache_dir}${arg_changelog}${arg_checksum}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
 
