@@ -101,7 +101,7 @@ define createrepo (
     $cmd = '/usr/bin/createrepo'
     $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+    $createrepo_update = "${cmd} ${arg} --update ${repository_dir} >/dev/null 2>&1"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,
