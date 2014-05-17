@@ -44,7 +44,7 @@ describe 'createrepo', :type => :define do
                 end
 
                 let :params do
-                    param_set
+                    param_hash
                 end
 
                 let :command_base do
