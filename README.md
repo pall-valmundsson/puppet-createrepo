@@ -90,5 +90,11 @@ Sets the checksum type for repomd.xml. This needs to be set to ```sha``` if ```c
 
 - *Default*: ```undef```
 
+update_file_path
+-------------
+Location of the repository update script file.
+
+- *Default*: ```/usr/local/bin/createrepo-update-${name}```
+
 # Issues #
 Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)

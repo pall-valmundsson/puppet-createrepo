@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $(whoami) != '<%= @repo_owner %>' ]; then
+    echo "You really should be <%= @repo_owner %> while running $0"
+    exit 1
+fi
+
+<%= @createrepo_update %>

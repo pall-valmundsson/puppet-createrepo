@@ -101,6 +101,25 @@ describe 'createrepo', :type => :define do
                         })
                     end
                 end
+
+                describe "includes update script" do
+                    it "file" do
+                        should contain_file("/usr/local/bin/createrepo-update-#{title}").with({
+                            'ensure' => 'present',
+                            'owner'  => param_hash[:repo_owner],
+                            'group'  => param_hash[:repo_group],
+                            'mode'   => '0755',
+                        })
+                    end
+                    
+                    it "content" do
+                        should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                            .with_content(/.*\$\(whoami\) != '#{param_hash[:repo_owner]}'.*/) \
+                            .with_content(/.*You really should be #{param_hash[:repo_owner]}.*/) \
+                            .with_content(/.*#{command_base} --update #{param_hash[:repository_dir]}.*/)
+                    end
+                end
+
             end
         end
     end

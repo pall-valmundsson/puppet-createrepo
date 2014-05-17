@@ -25,5 +25,16 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       end
     end
 
+    describe file('/usr/local/bin/createrepo-update-test-repo') do
+      it { should be_file }
+      it { should be_mode '755' }
+      it { should be_owned_by 'root' }
+      it { should be_grouped_into 'root' }
+      if fact('osfamily') != 'RedHat'
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo' }
+      else
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo' }
+      end
+    end
   end
 end

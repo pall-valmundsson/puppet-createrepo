@@ -34,6 +34,9 @@
 # [*checksum_type*]
 #   For compatibility with older versions of yum.
 #
+# [*update_file_path*]
+#   Location of repo update script.
+#
 # === Variables
 #
 # None.
@@ -54,15 +57,16 @@
 # Copyright 2012, 2013 Pall Valmundsson, unless otherwise noted.
 #
 define createrepo (
-    $repository_dir  = "/var/yumrepos/${name}",
-    $repo_cache_dir  = "/var/cache/yumrepos/${name}",
-    $repo_owner      = 'root',
-    $repo_group      = 'root',
-    $enable_cron     = true,
-    $cron_minute     = '*/1',
-    $cron_hour       = '*',
-    $changelog_limit = 5,
-    $checksum_type   = undef,
+    $repository_dir   = "/var/yumrepos/${name}",
+    $repo_cache_dir   = "/var/cache/yumrepos/${name}",
+    $repo_owner       = 'root',
+    $repo_group       = 'root',
+    $enable_cron      = true,
+    $cron_minute      = '*/1',
+    $cron_hour        = '*',
+    $changelog_limit  = 5,
+    $checksum_type    = undef,
+    $update_file_path = "/usr/local/bin/createrepo-update-${name}",
 ) {
     file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
@@ -130,5 +134,13 @@ define createrepo (
             group   => $repo_group,
             require => Exec["createrepo-${name}"],
         }
+    }
+
+    file { $update_file_path:
+        ensure  => 'present',
+        owner   => $repo_owner,
+        group   => $repo_group,
+        mode    => '0755',
+        content => template('createrepo/createrepo-update.erb'),
     }
 }
