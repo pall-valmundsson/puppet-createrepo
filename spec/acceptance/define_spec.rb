@@ -1,19 +1,16 @@
-require 'spec_helper_system'
+require 'spec_helper_acceptance'
 
-describe 'createrepo define:' do
+describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   context 'basic usage:' do
-    pp = <<-EOS
-      file { '/var/yumrepos': ensure => directory, }
-      file { '/var/cache/yumrepos': ensure => directory, }
-      createrepo { 'test-repo': }
-    EOS
+    it 'should work with no errors' do
+      pp = <<-EOS
+        file { '/var/yumrepos': ensure => directory, }
+        file { '/var/cache/yumrepos': ensure => directory, }
+        createrepo { 'test-repo': }
+      EOS
 
-    context puppet_apply(pp) do
-      its(:stderr) { should be_empty }
-      its(:exit_code) { should_not == 1 }
-      its(:refresh) { should be_nil }
-      its(:stderr) { should be_empty }
-      its(:exit_code) { should be_zero }
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
 
     describe file('/var/yumrepos/test-repo/repodata') do
@@ -21,7 +18,7 @@ describe 'createrepo define:' do
     end
 
     describe cron do
-      if node.facts['osfamily'] != 'RedHat'
+      if fact('osfamily') != 'RedHat'
         it { should have_entry('*/1 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo').with_user('root') }
       else
         it { should have_entry('*/1 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo').with_user('root') }

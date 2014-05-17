@@ -1,10 +1,13 @@
 source 'https://rubygems.org'
 
 group :development, :test do
-  gem 'puppetlabs_spec_helper', :require => false
-  gem 'rspec-system-puppet', '~>2.0'
-  gem 'rspec-system-serverspec'
-  gem 'puppet-lint'
+  gem 'rake', '10.1.1',          :require => false
+  gem 'rspec-puppet', '>=1.0.0', :require => false
+  gem 'puppetlabs_spec_helper',  :require => false
+  gem 'serverspec',              :require => false
+  gem 'puppet-lint',             :require => false
+  gem 'beaker',                  :require => false
+  gem 'beaker-rspec',            :require => false
 end
 
 if facterversion = ENV['FACTER_GEM_VERSION']

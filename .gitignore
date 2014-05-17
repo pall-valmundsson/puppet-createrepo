@@ -1,6 +1,6 @@
 .bundle/
 bundle/
 Gemfile.lock
-.rspec_system/
+.vagrant/
 pkg/
 spec/fixtures
