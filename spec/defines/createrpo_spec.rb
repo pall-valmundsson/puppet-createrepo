@@ -19,7 +19,6 @@ describe 'createrepo', :type => :define do
             :cron_minute     => '*/1',
             :cron_hour       => '*',
             :changelog_limit => '5',
-            :checksum_type   => nil,
         }
         end
 
@@ -32,7 +31,7 @@ describe 'createrepo', :type => :define do
             :enable_cron     => false,
             :cron_minute     => '10',
             :cron_hour       => '1',
-            :changelog_limit => nil,
+            :changelog_limit => false,
             :checksum_type   => 'sha1',
          },
         ].each do |param_set|
@@ -49,8 +48,8 @@ describe 'createrepo', :type => :define do
 
                 let :command_base do
                     "/usr/bin/createrepo --cachedir #{param_hash[:repo_cache_dir]}" \
-                        "#{param_hash[:changelog_limit] == nil ? "" : " --changelog-limit #{param_hash[:changelog_limit]}"}" \
-                        "#{param_hash[:checksum_type] == nil ? "" : " --checksum #{param_hash[:checksum_type]}"}"
+                        "#{param_hash[:changelog_limit] == false ? "" : " --changelog-limit #{param_hash[:changelog_limit]}"}" \
+                        "#{param_hash.has_key?(:checksum_type) == false ? "" : " --checksum #{param_hash[:checksum_type]}"}"
                 end
 
                 it "installs package" do
