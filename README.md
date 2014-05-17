@@ -96,5 +96,17 @@ Location of the repository update script file.
 
 - *Default*: ```/usr/local/bin/createrepo-update-${name}```
 
+suppress_cron_stdout
+--------------------
+Redirect stdout output from cron to /dev/null.
+
+- *Default*: ```false```
+
+suppress_cron_stderr
+--------------------
+Redirect stderr output from cron to /dev/null.
+
+- *Default*: ```false```
+
 # Issues #
 Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)

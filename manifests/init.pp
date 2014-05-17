@@ -37,6 +37,12 @@
 # [*update_file_path*]
 #   Location of repo update script.
 #
+# [*suppress_cron_stdout*]
+#   Redirect stdout output from cron to /dev/null.
+#
+# [*suppress_cron_stderr*]
+#   Redirect stderr output from cron to /dev/null.
+#
 # === Variables
 #
 # None.
@@ -57,16 +63,18 @@
 # Copyright 2012-2014 Páll Valmundsson, unless otherwise noted.
 #
 define createrepo (
-    $repository_dir   = "/var/yumrepos/${name}",
-    $repo_cache_dir   = "/var/cache/yumrepos/${name}",
-    $repo_owner       = 'root',
-    $repo_group       = 'root',
-    $enable_cron      = true,
-    $cron_minute      = '*/1',
-    $cron_hour        = '*',
-    $changelog_limit  = 5,
-    $checksum_type    = undef,
-    $update_file_path = "/usr/local/bin/createrepo-update-${name}",
+    $repository_dir       = "/var/yumrepos/${name}",
+    $repo_cache_dir       = "/var/cache/yumrepos/${name}",
+    $repo_owner           = 'root',
+    $repo_group           = 'root',
+    $enable_cron          = true,
+    $cron_minute          = '*/1',
+    $cron_hour            = '*',
+    $changelog_limit      = 5,
+    $checksum_type        = undef,
+    $update_file_path     = "/usr/local/bin/createrepo-update-${name}",
+    $suppress_cron_stdout = false,
+    $suppress_cron_stderr = false,
 ) {
     file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
@@ -102,8 +110,20 @@ define createrepo (
         }
     }
 
+    if $suppress_cron_stdout {
+        $_stdout_suppress = ' 1>/dev/null'
+    } else {
+        $_stdout_suppress = ''
+    }
+    if $suppress_cron_stderr {
+        $_stderr_suppress = ' 2>/dev/null'
+    } else {
+        $_stderr_suppress = ''
+    }
+
     $cmd = '/usr/bin/createrepo'
     $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}"
+    $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
 
@@ -121,7 +141,7 @@ define createrepo (
 
     if $enable_cron == true {
         cron { "update-createrepo-${name}":
-            command => $createrepo_update,
+            command => "${createrepo_update}${cron_output_suppression}",
             user    => $repo_owner,
             minute  => $cron_minute,
             hour    => $cron_hour,

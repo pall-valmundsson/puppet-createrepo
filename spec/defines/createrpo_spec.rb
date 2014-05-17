@@ -11,14 +11,16 @@ describe 'createrepo', :type => :define do
 
         let :default_params do
         {
-            :repository_dir  => '/var/yumrepos/testyumrepo',
-            :repo_cache_dir  => '/var/cache/yumrepos/testyumrepo',
-            :repo_owner      => 'root',
-            :repo_group      => 'root',
-            :enable_cron     => true,
-            :cron_minute     => '*/1',
-            :cron_hour       => '*',
-            :changelog_limit => '5',
+            :repository_dir       => '/var/yumrepos/testyumrepo',
+            :repo_cache_dir       => '/var/cache/yumrepos/testyumrepo',
+            :repo_owner           => 'root',
+            :repo_group           => 'root',
+            :enable_cron          => true,
+            :cron_minute          => '*/1',
+            :cron_hour            => '*',
+            :changelog_limit      => '5',
+            :suppress_cron_stdout => false,
+            :suppress_cron_stderr => false,
         }
         end
 
@@ -34,6 +36,12 @@ describe 'createrepo', :type => :define do
             :changelog_limit => false,
             :checksum_type   => 'sha1',
          },
+         {
+            :suppress_cron_stdout => true,
+         },
+         {
+            :suppress_cron_stderr => true,
+         }
         ].each do |param_set|
 
             describe "when #{param_set == {} ? "using default" : "specifying"} class parameters" do
@@ -50,6 +58,11 @@ describe 'createrepo', :type => :define do
                     "/usr/bin/createrepo --cachedir #{param_hash[:repo_cache_dir]}" \
                         "#{param_hash[:changelog_limit] == false ? "" : " --changelog-limit #{param_hash[:changelog_limit]}"}" \
                         "#{param_hash.has_key?(:checksum_type) == false ? "" : " --checksum #{param_hash[:checksum_type]}"}"
+                end
+
+                let :command_output_redirection do
+                    "#{param_hash[:suppress_cron_stdout] ? " 1>/dev/null" : ""}" \
+                    "#{param_hash[:suppress_cron_stderr] ? " 2>/dev/null" : ""}"
                 end
 
                 it "installs package" do
@@ -85,7 +98,7 @@ describe 'createrepo', :type => :define do
                 it "updates repository" do
                     if param_hash[:enable_cron] == true
                         should contain_cron("update-createrepo-#{title}").with({
-                            'command' => "#{command_base} --update #{param_hash[:repository_dir]}",
+                            'command' => "#{command_base} --update #{param_hash[:repository_dir]}#{command_output_redirection}",
                             'user'    => param_hash[:repo_owner],
                             'minute'  => param_hash[:cron_minute],
                             'hour'    => param_hash[:cron_hour],
