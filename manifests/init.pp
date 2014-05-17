@@ -50,11 +50,11 @@
 #
 # === Authors
 #
-# Author Name <pall.valmundsson@gmail.com>
+# Páll Valmundsson <pall.valmundsson@gmail.com>
 #
 # === Copyright
 #
-# Copyright 2012, 2013 Pall Valmundsson, unless otherwise noted.
+# Copyright 2012-2014 Páll Valmundsson, unless otherwise noted.
 #
 define createrepo (
     $repository_dir   = "/var/yumrepos/${name}",
