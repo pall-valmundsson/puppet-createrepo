@@ -1,4 +1,4 @@
-STS:
+HOSTS:
   debian-70rc1-x64:
     roles:
       - master
