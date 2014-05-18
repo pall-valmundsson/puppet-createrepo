@@ -1,8 +1,8 @@
-# createrepo module #
+#createrepo
 
 [![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
 
-# What it is and what it isn't #
+##What it is and what it isn't
 
 This is module creates yum repositories and metadata caches.
 It also manages a cronjob to update the repodata.
@@ -12,17 +12,19 @@ It *doesn't*:
 - manage the directoy tree up to the root of the repository
 - manage a HTTP server for repository clients
 
-# Example #
+##Example usage
 
+```puppet
     createrepo { 'yumrepo':
         repository_dir => '/var/yumrepos/yumrepo',
         repo_cache_dir => '/var/cache/yumrepos/yumrepo'
     }
+```
 
-# Status #
+##Status
 Beta. Tested on CentOS/RHEL 6 with Puppet 2.7.
 
-# Regarding checksums #
+##Regarding checksums
 Older versions of yum do not support some later default checksum types. From the ```createrepo``` man page:
 
 
@@ -33,80 +35,92 @@ Older versions of yum do not support some later default checksum types. From the
 
 ```createrepo``` provides a checksum_type parameter to change the checksum type.
 
-# Parameters #
+##Parameters
 
-repository_dir
---------------
+###repository_dir
+
 The path to the base directory of the repository. Here, or in subdirectories
 you store the .rpm files
 
 - *Default*: ```/var/yumrepos/${name}```
 
-repo_cache_dir
---------------
+###repo_cache_dir
+
 Path to a checksum directory. Makes updates to repository much faster.
 
 - *Default*: ```/var/cache/yumrepos/${name}```
 
-repo_owner
-----------
+###repo_owner
+
 Owner of the repository directory.
 
 - *Default*: ```root```
 
-repo_group
-----------
+###repo_group
+
 Group of the repository directory.
 
 - *Default*: ```root```
 
-enable_cron
------------
+###enable_cron
+
 Enable regular repository updates via cron or Puppet.
 
 - *Default*: ```true```
 
-cron_minute
------------
+###cron_minute
+
 Minute parameter for cron metadata update job.
 
 - *Default*: ```*/1```
 
-cron_hour
----------
+###cron_hour
+
 Hour parameter for cron metadata update job.
 
 - *Default*: ```*```
 
-changelog_limit
----------------
+###changelog_limit
+
 Number of changelog entries to import into metadata.
 
 - *Default*: ```5```
 
-checksum_type
--------------
+###checksum_type
+
 Sets the checksum type for repomd.xml. This needs to be set to ```sha``` if ```createrepo``` is defined on a RHEL/CentOS 6 host and is accessed by RHEL/CentOS 5 or earlier clients.
 
 - *Default*: ```undef```
 
-update_file_path
--------------
+###update_file_path
+
 Location of the repository update script file.
 
 - *Default*: ```/usr/local/bin/createrepo-update-${name}```
 
-suppress_cron_stdout
---------------------
+###suppress_cron_stdout
+
 Redirect stdout output from cron to /dev/null.
 
 - *Default*: ```false```
 
-suppress_cron_stderr
---------------------
+###suppress_cron_stderr
+
 Redirect stderr output from cron to /dev/null.
 
 - *Default*: ```false```
 
-# Issues #
+##Running tests
+
+This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker-rspec](https://github.com/puppetlabs/beaker-rspec) to verify functionality. For in-depth information please see their respective documentation.
+
+Quickstart:
+
+    gem install bundler
+    bundle install
+    bundle exec rake spec
+    bundle exec rspec spec/acceptance
+    RS_DEBUG=yes bundle exec rspec spec/acceptance
+
+##Issues
 Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)
