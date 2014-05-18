@@ -1,138 +1,112 @@
 require 'spec_helper'
 
+# Uses rspec shared examples from spec/support/createrepo_shared_examples.rb
+
 describe 'createrepo', :type => :define do
+    let :title do
+        'testyumrepo'
+    end
     context "On RedHat OS" do
         let :facts do
             { :osfamily => 'RedHat' }
         end
-        let :title do
-            'testyumrepo'
-        end
 
-        let :default_params do
-        {
-            :repository_dir       => '/var/yumrepos/testyumrepo',
-            :repo_cache_dir       => '/var/cache/yumrepos/testyumrepo',
-            :repo_owner           => 'root',
-            :repo_group           => 'root',
-            :enable_cron          => true,
-            :cron_minute          => '*/1',
-            :cron_hour            => '*',
-            :changelog_limit      => '5',
-            :suppress_cron_stdout => false,
-            :suppress_cron_stderr => false,
-        }
-        end
-
-        [{},
-         {
-            :repository_dir  => '/var/yum/repo',
-            :repo_cache_dir  => '/var/cache/yum/repo',
-            :repo_owner      => 'yum',
-            :repo_group      => 'yum',
-            :enable_cron     => false,
-            :cron_minute     => '10',
-            :cron_hour       => '1',
-            :changelog_limit => false,
-            :checksum_type   => 'sha1',
-         },
-         {
-            :suppress_cron_stdout => true,
-         },
-         {
-            :suppress_cron_stderr => true,
-         }
-        ].each do |param_set|
-
-            describe "when #{param_set == {} ? "using default" : "specifying"} class parameters" do
-
-                let :param_hash do
-                    default_params.merge(param_set)
-                end
-
-                let :params do
-                    param_hash
-                end
-
-                let :command_base do
-                    "/usr/bin/createrepo --cachedir #{param_hash[:repo_cache_dir]}" \
-                        "#{param_hash[:changelog_limit] == false ? "" : " --changelog-limit #{param_hash[:changelog_limit]}"}" \
-                        "#{param_hash.has_key?(:checksum_type) == false ? "" : " --checksum #{param_hash[:checksum_type]}"}"
-                end
-
-                let :command_output_redirection do
-                    "#{param_hash[:suppress_cron_stdout] ? " 1>/dev/null" : ""}" \
-                    "#{param_hash[:suppress_cron_stderr] ? " 2>/dev/null" : ""}"
-                end
-
-                it "installs package" do
-                    should contain_package('createrepo')
-                end
-
-                it "creates directories" do
-                    should contain_file(param_hash[:repository_dir]).with({
-                        'ensure' => 'directory',
-                        'owner'  => param_hash[:repo_owner],
-                        'group'  => param_hash[:repo_group],
-                        'mode'   => '0775',
-                    })
-    
-                    should contain_file(param_hash[:repo_cache_dir]).with({
-                        'ensure' => 'directory',
-                        'owner'  => param_hash[:repo_owner],
-                        'group'  => param_hash[:repo_group],
-                        'mode'   => '0775',
-                    })
-                end
-
-                it "creates repository" do 
-                    should contain_exec("createrepo-#{title}").with({
-                        'command' => "#{command_base} --database #{param_hash[:repository_dir]}",
-                        'user'    => param_hash[:repo_owner],
-                        'group'   => param_hash[:repo_group],
-                        'creates' => "#{param_hash[:repository_dir]}/repodata",
-                        'require' => ['Package[createrepo]', "File[#{param_hash[:repository_dir]}]", "File[#{param_hash[:repo_cache_dir]}]"]
-                    })
-                end
-
-                it "updates repository" do
-                    if param_hash[:enable_cron] == true
-                        should contain_cron("update-createrepo-#{title}").with({
-                            'command' => "#{command_base} --update #{param_hash[:repository_dir]}#{command_output_redirection}",
-                            'user'    => param_hash[:repo_owner],
-                            'minute'  => param_hash[:cron_minute],
-                            'hour'    => param_hash[:cron_hour],
-                            'require' => "Exec[createrepo-#{title}]"
-                        })
-                    else
-                        should contain_exec("update-createrepo-#{title}").with({
-                            'command' => "#{command_base} --update #{param_hash[:repository_dir]}",
-                            'user'    => param_hash[:repo_owner],
-                            'group'   => param_hash[:repo_group],
-                            'require' => "Exec[createrepo-#{title}]"
-                        })
-                    end
-                end
-
-                describe "includes update script" do
-                    it "file" do
-                        should contain_file("/usr/local/bin/createrepo-update-#{title}").with({
-                            'ensure' => 'present',
-                            'owner'  => param_hash[:repo_owner],
-                            'group'  => param_hash[:repo_group],
-                            'mode'   => '0755',
-                        })
-                    end
-                    
-                    it "content" do
-                        should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                            .with_content(/.*\$\(whoami\) != '#{param_hash[:repo_owner]}'.*/) \
-                            .with_content(/.*You really should be #{param_hash[:repo_owner]}.*/) \
-                            .with_content(/.*#{command_base} --update #{param_hash[:repository_dir]}.*/)
-                    end
-                end
-
+        # The createrepo command is :osfamily specific
+        describe "it uses createrepo to" do
+            it "create repository with correct command" do 
+                should contain_exec("createrepo-#{title}").with({
+                    'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --database /var/yumrepos/testyumrepo",
+                })
             end
+
+            it "update repository with correct command" do
+                should contain_cron("update-createrepo-#{title}").with({
+                    'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo",
+                })
+            end
+        end
+
+        describe "it ensures that the update script" do
+            # The createrepo update command is :osfamily specific
+            it "has the correct command" do
+                should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                    .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --changelog-limit 5 --update \/var\/yumrepos\/testyumrepo.*/)
+            end
+        end
+
+        it_works_like "when using default parameters"
+        it_works_like "when owner and group are provided"
+        it_works_like "when repository_dir and repository_cache_dir are provided"
+        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo"
+        it_works_like "when suppressing cron output"
+        it_works_like "when cron schedule is modified"
+
+        context "works with changelog limit modifications" do
+            let :params do
+                {
+                    :changelog_limit => 20,
+                }
+            end
+            it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --changelog-limit 20 .*$/
+        end
+
+        context "works when specifying checksum type" do
+            let :params do
+                {
+                    :checksum_type => 'sha1',
+                }
+            end
+            it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --checksum sha1 .*$/
+        end
+    end
+
+    context "On Debian OS" do
+        let :facts do
+            { :osfamily => 'Debian' }
+        end
+
+        # The createrepo command is :osfamily specific
+        it "creates repository" do 
+            should contain_exec("createrepo-#{title}").with({
+                'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --database /var/yumrepos/testyumrepo",
+            })
+        end
+
+        it "updates repository" do
+            should contain_cron("update-createrepo-#{title}").with({
+                'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo",
+            })
+        end
+
+        # The createrepo update command is :osfamily specific
+        it "update script has correct command" do
+            should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --update \/var\/yumrepos\/testyumrepo.*/)
+        end
+
+        it_works_like "when using default parameters"
+        it_works_like "when owner and group are provided"
+        it_works_like "when repository_dir and repository_cache_dir are provided"
+        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo"
+        it_works_like "when suppressing cron output"
+        it_works_like "when cron schedule is modified"
+
+        context "works with changelog limit modifications" do
+            let :params do
+                {
+                    :changelog_limit => 20,
+                }
+            end
+            it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* (?!--changelog-limit).*$/
+        end
+
+        context "works when specifying checksum type" do
+            let :params do
+                {
+                    :checksum_type => 'sha1',
+                }
+            end
+            it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* (?!--checksum).*$/
         end
     end
 end
