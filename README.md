@@ -4,8 +4,10 @@
 
 ##What it is and what it isn't
 
-This is module creates yum repositories and metadata caches.
-It also manages a cronjob to update the repodata.
+It does:
+- create yum repositories and it metadata caches
+- create a script to update the repository (handy for post hooks)
+- optionally manage a cronjob to update the repository on a schedule
 
 It *doesn't*:
 
