@@ -1,3 +1,9 @@
+2014-18-05 - Version 0.9.5
+* Allow suppressing of output from cronjob (#8)
+* Repository update script for each repo
+* Converted rspec-system tests to beaker
+* Major refactoring of rspec tests
+
 2013-17-12 - Version 0.9.4
 * Repo update cronjob made optional (Vlastimil Holer)
 * changelog_limit made optional (Vlastimil Holer)
