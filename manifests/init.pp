@@ -76,6 +76,10 @@ define createrepo (
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
 ) {
+    validate_absolute_path($repository_dir)
+    validate_absolute_path($repo_cache_dir)
+    validate_string($repo_owner)
+    validate_string($repo_group)
     file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
         owner  => $repo_owner,
@@ -110,6 +114,7 @@ define createrepo (
         }
     }
 
+    validate_bool($suppress_cron_stdout, $suppress_cron_stderr)
     if $suppress_cron_stdout {
         $_stdout_suppress = ' 1>/dev/null'
     } else {
@@ -139,6 +144,7 @@ define createrepo (
         ],
     }
 
+    validate_bool($enable_cron)
     if $enable_cron == true {
         cron { "update-createrepo-${name}":
             command => "${createrepo_update}${cron_output_suppression}",
@@ -156,6 +162,7 @@ define createrepo (
         }
     }
 
+    validate_absolute_path($update_file_path)
     file { $update_file_path:
         ensure  => 'present',
         owner   => $repo_owner,

@@ -6,3 +6,5 @@ license 'GPLv3'
 summary 'Manages creation of yum repositories'
 description 'Creates yum repositories and installs cron jobs to update metadata.'
 project_page 'https://github.com/pall-valmundsson/puppet-createrepo'
+
+dependency 'puppetlabs/stdlib', '>= 2.4.0'

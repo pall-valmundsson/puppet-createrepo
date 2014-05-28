@@ -40,6 +40,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo"
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
+        it_works_like "when supplying invalid parameters"
 
         context "works with changelog limit modifications" do
             let :params do
@@ -90,6 +91,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo"
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
+        it_works_like "when supplying invalid parameters"
 
         context "works with changelog limit modifications" do
             let :params do

@@ -330,3 +330,72 @@ shared_examples "when suppressing cron output" do
         end
     end
 end
+
+shared_examples "when supplying invalid parameters" do
+    context "for repository_dir" do
+        let :params do
+            {
+                :repository_dir => "non/absolute/path",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+        end
+    end
+    context "for repo_cache_dir" do
+        let :params do
+            {
+                :repo_cache_dir => "non/absolute/path",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+        end
+    end
+    context "for enable_cron" do
+        let :params do
+            {
+                :enable_cron => "false",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        end
+    end
+    context "for update_file_path" do
+        let :params do
+            {
+                :update_file_path => "non/absolute/path",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+        end
+    end
+    context "for suppress_cron_stdout" do
+        let :params do
+            {
+                :suppress_cron_stdout => "false",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        end
+    end
+    context "for suppress_cron_stderr" do
+        let :params do
+            {
+                :suppress_cron_stderr => "false",
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        end
+    end
+end
