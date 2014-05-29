@@ -37,4 +37,36 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       end
     end
   end
+
+  context 'with apache configuration:' do
+    it 'should work with no errors' do
+      pp = <<-EOS
+        file { '/var/yumrepos': ensure => directory, }
+        file { '/var/cache/yumrepos': ensure => directory, }
+        createrepo { 'test-repo':
+          repository_dir => '/var/yumrepos/test-repo',
+          repo_cache_dir => '/var/cache/yumrepos/test-repo',
+        }
+        include apache
+        apache::vhost { 'yum':
+          port          => 80,
+          docroot       => '/var/yumrepos',
+          docroot_owner => 'root',
+          docroot_group => 'root',
+          serveraliases => ['yum.foo.local'],
+        }
+        host { 'yum.foo.local': ip => '127.0.0.1', }
+      EOS
+        
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+    end
+
+    it 'repodata should be accessible via http' do
+      shell("/usr/bin/curl yum.foo.local:80/test-repo/repodata/") do |r|
+        r.stdout.should =~ /primary.xml/
+        r.exit_code.should == 0
+      end
+    end
+  end
 end
