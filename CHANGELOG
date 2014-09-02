@@ -1,3 +1,9 @@
+2014-02-09 - Version 0.9.6
+* Add timeout parameter for execs (#9)
+* Add groupfile support
+* Even more tests
+* metadata.json with tested OS compatibility data
+
 2014-18-05 - Version 0.9.5
 * Allow suppressing of output from cronjob (#8)
 * Repository update script for each repo
