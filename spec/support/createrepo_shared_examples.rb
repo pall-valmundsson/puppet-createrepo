@@ -242,6 +242,15 @@ shared_examples "when cron schedule is modified" do
     end
 end
 
+shared_examples "when groupfile is provided" do
+    let :params do
+        {
+            :groupfile => 'comps.xml',
+        }
+    end
+    it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --groupfile comps.xml .*$/
+end
+
 shared_examples "createrepo command changes" do |command_matcher|
     # This shared example takes a regex and matches against all
     # createrepo commands

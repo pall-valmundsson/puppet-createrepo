@@ -41,6 +41,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
         it_works_like "when supplying invalid parameters"
+        it_works_like "when groupfile is provided"
 
         context "works with changelog limit modifications" do
             let :params do
@@ -92,6 +93,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
         it_works_like "when supplying invalid parameters"
+        it_works_like "when groupfile is provided"
 
         context "works with changelog limit modifications" do
             let :params do

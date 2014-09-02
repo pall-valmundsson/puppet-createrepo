@@ -43,6 +43,9 @@
 # [*suppress_cron_stderr*]
 #   Redirect stderr output from cron to /dev/null.
 #
+# [*groupfile*]
+#   Provide a groupfile, e.g. comps.xml
+#
 # === Variables
 #
 # None.
@@ -75,11 +78,13 @@ define createrepo (
     $update_file_path     = "/usr/local/bin/createrepo-update-${name}",
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
+    $groupfile            = undef
 ) {
     validate_absolute_path($repository_dir)
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
     validate_string($repo_group)
+
     file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
         owner  => $repo_owner,
@@ -126,8 +131,15 @@ define createrepo (
         $_stderr_suppress = ''
     }
 
+    if $groupfile {
+        validate_string($groupfile)
+        $_arg_groupfile = " --groupfile ${groupfile}"
+    } else {
+        $_arg_groupfile = ''
+    }
+
     $cmd = '/usr/bin/createrepo'
-    $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}"
+    $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"

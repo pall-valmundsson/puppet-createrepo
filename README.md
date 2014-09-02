@@ -112,6 +112,12 @@ Redirect stderr output from cron to /dev/null.
 
 - *Default*: ```false```
 
+###groupfile
+
+Yum repository groupfile. Creates the repository metadata with supplied group information.
+
+- *Default*: ```undef```
+
 ##Running tests
 
 This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker-rspec](https://github.com/puppetlabs/beaker-rspec) to verify functionality. For in-depth information please see their respective documentation.
