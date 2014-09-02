@@ -46,6 +46,9 @@
 # [*groupfile*]
 #   Provide a groupfile, e.g. comps.xml
 #
+# [*timeout*]
+#   Exec timeout for createrepo commands.
+#
 # === Variables
 #
 # None.
@@ -78,12 +81,14 @@ define createrepo (
     $update_file_path     = "/usr/local/bin/createrepo-update-${name}",
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
-    $groupfile            = undef
+    $groupfile            = undef,
+    $timeout              = 300
 ) {
     validate_absolute_path($repository_dir)
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
     validate_string($repo_group)
+    if type($timeout) != 'integer' { fail('$timeout not an integer') }
 
     file { [$repository_dir, $repo_cache_dir]:
         ensure => directory,
@@ -149,6 +154,7 @@ define createrepo (
         user    => $repo_owner,
         group   => $repo_group,
         creates => "${repository_dir}/repodata",
+        timeout => $timeout,
         require => [
             Package['createrepo'],
             File[$repository_dir],
@@ -170,6 +176,7 @@ define createrepo (
             command => $createrepo_update,
             user    => $repo_owner,
             group   => $repo_group,
+            timeout => $timeout,
             require => Exec["createrepo-${name}"],
         }
     }

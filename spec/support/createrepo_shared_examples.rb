@@ -251,6 +251,33 @@ shared_examples "when groupfile is provided" do
     it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --groupfile comps.xml .*$/
 end
 
+shared_examples "when exec timeout is provided" do
+    let :params do
+        {
+            :timeout => 900,
+        }
+    end
+    it "it affects createrepo exec" do
+        should contain_exec("createrepo-#{title}").with({
+            'timeout' => 900,
+        })
+    end
+    describe "with enable_cron" do
+        context "as false" do
+            let :params do
+                super().merge({
+                    :enable_cron => false,
+                })
+            end
+            it "it affects createrepo update exec" do
+                should contain_exec("update-createrepo-#{title}").with({
+                    'timeout' => 900,
+                })
+            end
+        end
+    end
+end
+
 shared_examples "createrepo command changes" do |command_matcher|
     # This shared example takes a regex and matches against all
     # createrepo commands

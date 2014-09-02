@@ -118,6 +118,12 @@ Yum repository groupfile. Creates the repository metadata with supplied group in
 
 - *Default*: ```undef```
 
+###timeout
+
+Exec timeout for createrepo commands. Can be useful when repositories are huge. Can even be set to 0 to disable timeouts.
+
+- *Default*: ```300```
+
 ##Running tests
 
 This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker-rspec](https://github.com/puppetlabs/beaker-rspec) to verify functionality. For in-depth information please see their respective documentation.
