@@ -49,6 +49,10 @@
 # [*timeout*]
 #   Exec timeout for createrepo commands.
 #
+# [*manage_repo_dirs*]
+#   Manage the repository directory. If false the repository and cache directories
+#   must be created manually/externally.
+#
 # === Variables
 #
 # None.
@@ -82,19 +86,24 @@ define createrepo (
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
     $groupfile            = undef,
-    $timeout              = 300
+    $timeout              = 300,
+    $manage_repo_dirs     = true
 ) {
     validate_absolute_path($repository_dir)
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
     validate_string($repo_group)
-    if type($timeout) != 'integer' { fail('$timeout not an integer') }
+    if type($timeout) != 'integer' { fail('$timeout is not an integer') }
 
-    file { [$repository_dir, $repo_cache_dir]:
-        ensure => directory,
-        owner  => $repo_owner,
-        group  => $repo_group,
-        mode   => '0775',
+
+    validate_bool($manage_repo_dirs)
+    if $manage_repo_dirs {
+        file { [$repository_dir, $repo_cache_dir]:
+            ensure => directory,
+            owner  => $repo_owner,
+            group  => $repo_group,
+            mode   => '0775',
+        }
     }
 
     if ! defined(Package['createrepo']) {

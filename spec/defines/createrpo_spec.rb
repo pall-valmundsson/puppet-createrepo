@@ -43,6 +43,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when supplying invalid parameters"
         it_works_like "when groupfile is provided"
         it_works_like "when exec timeout is provided"
+        it_works_like "when directory should not be managed"
 
         context "works with changelog limit modifications" do
             let :params do
@@ -96,6 +97,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when supplying invalid parameters"
         it_works_like "when groupfile is provided"
         it_works_like "when exec timeout is provided"
+        it_works_like "when directory should not be managed"
 
         context "works with changelog limit modifications" do
             let :params do

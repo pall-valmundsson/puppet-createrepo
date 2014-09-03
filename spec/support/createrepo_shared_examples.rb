@@ -278,6 +278,19 @@ shared_examples "when exec timeout is provided" do
     end
 end
 
+
+shared_examples "when directory should not be managed" do
+    let :params do
+        {
+            :manage_repo_dirs => false,
+        }
+    end
+    it "creates directories" do
+        should_not contain_file('/var/yumrepos/testyumrepo')
+        should_not contain_file('/var/cache/yumrepos/testyumrepo')
+    end
+end
+
 shared_examples "createrepo command changes" do |command_matcher|
     # This shared example takes a regex and matches against all
     # createrepo commands
@@ -368,6 +381,27 @@ shared_examples "when suppressing cron output" do
 end
 
 shared_examples "when supplying invalid parameters" do
+    context "for manage_repo_dirs" do
+        let :params do
+            {
+                :manage_repo_dirs => 'False',
+            }
+        end
+
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        end
+    end
+    context "for timeout" do
+        let :params do
+            {
+                :timeout => 'ninehundred',
+            }
+        end
+        it 'should fail' do
+            expect { subject }.to raise_error(Puppet::Error, /is not an integer/)
+        end
+    end
     context "for repository_dir" do
         let :params do
             {

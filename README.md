@@ -124,6 +124,11 @@ Exec timeout for createrepo commands. Can be useful when repositories are huge. 
 
 - *Default*: ```300```
 
+###manage_repo_dirs
+Manage the repository directory. If false the repository and cache directories must be created manually/externally.
+
+- *Default*: ```true```
+
 ##Running tests
 
 This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker-rspec](https://github.com/puppetlabs/beaker-rspec) to verify functionality. For in-depth information please see their respective documentation.
