@@ -50,8 +50,8 @@
 #   Exec timeout for createrepo commands.
 #
 # [*manage_repo_dirs*]
-#   Manage the repository directory. If false the repository and cache directories
-#   must be created manually/externally.
+#   Manage the repository directory. If false the repository and cache
+#   directories must be created manually/externally.
 #
 # === Variables
 #
