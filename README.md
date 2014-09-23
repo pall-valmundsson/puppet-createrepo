@@ -2,19 +2,47 @@
 
 [![Puppet Forge](http://img.shields.io/puppetforge/v/palli/createrepo.svg)](https://forge.puppetlabs.com/palli/createrepo)  [![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
 
-##What it is and what it isn't
+####Table of Contents
 
-It does:
-- create yum repositories and it metadata caches
-- create a script to update the repository (handy for post hooks)
-- optionally manage a cronjob to update the repository on a schedule
+1. [Overview](#overview)
+2. [Module Description - What the module does and why it is useful](#module-description)
+3. [Setup - The basics of getting started with createrepo](#setup)
+    * [What createrepo affects](#what-createrepo-affects)
+    * [Setup requirements](#setup-requirements)
+    * [Beginning with createrepo](#beginning-with-createrepo)
+4. [Usage - Configuration options and additional functionality](#usage)
+    * [Regarding checksums](#regarding-checksums)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
+    * [Running tests](#running-tests)
+7. [Issues](#issues)
 
-It *doesn't*:
+##Overview
 
-- manage the directoy tree up to the root of the repository
-- manage a HTTP server for repository clients
+The createrepo module allows you to create and update yum repositories.
 
-##Example usage
+Tested on Puppet 2.7-3.7 on RHEL 5 and 6, Debian 7 and Ubuntu 12.04.
+
+##Module Description
+
+Yum repositories are a distribution method for RPM packages usually served via HTTP. The createrepo module creates yum repositories and it's metadata caches.
+It also provides mechanisms to update the repositories with an optional cron job and an update script, which is useful for post hooks in CI environments.
+    
+It does not manage the directory tree up to the root of the repository and does neither make any attempt to manage a HTTP server for repository clients.
+
+##Setup
+
+###What createrepo affects
+
+* repository and cache directories
+* createrepo package
+* cron jobs for repo updates (optional)
+* an update script, placed in /usr/local/bin by default 
+
+###Beginning with createrepo	
+
+Basic example:
 
 ```puppet
     createrepo { 'yumrepo':
@@ -23,113 +51,137 @@ It *doesn't*:
     }
 ```
 
-##Status
-Beta. Tested on CentOS/RHEL 6 with Puppet 2.7.
+##Usage
 
-##Regarding checksums
-Older versions of yum do not support some later default checksum types. From the ```createrepo``` man page:
+The module provides a single `define` so as many repositories can be created as needed, usually at least stable and testing repos are created.
 
+###Regarding checksums
+
+Older versions of yum do not support some later default checksum types. From the `createrepo` man page:
 
     Choose  the  checksum  type used in repomd.xml and for packages in the metadata.  The default is now
     "sha256" (if python has hashlib). The older default was "sha", which is actually "sha1", however explicitly
     using "sha1" doesn’t work on older (3.0.x) versions of yum, you need to specify "sha".
 
+`createrepo` provides a checksum_type parameter to change the checksum type.
 
-```createrepo``` provides a checksum_type parameter to change the checksum type.
+###Parameters
 
-##Parameters
-
-###repository_dir
+####`repository_dir`
 
 The path to the base directory of the repository. Here, or in subdirectories
 you store the .rpm files
 
-- *Default*: ```/var/yumrepos/${name}```
+- *Default*: `/var/yumrepos/${name}`
 
-###repo_cache_dir
+####`repo_cache_dir`
 
 Path to a checksum directory. Makes updates to repository much faster.
 
-- *Default*: ```/var/cache/yumrepos/${name}```
+- *Default*: `/var/cache/yumrepos/${name}`
 
-###repo_owner
+####`repo_owner`
 
 Owner of the repository directory.
 
-- *Default*: ```root```
+- *Default*: `root`
 
-###repo_group
+####`repo_group`
 
 Group of the repository directory.
 
-- *Default*: ```root```
+- *Default*: `root`
 
-###enable_cron
+####`enable_cron`
 
 Enable regular repository updates via cron or Puppet.
 
-- *Default*: ```true```
+- *Default*: `true`
 
-###cron_minute
+####`cron_minute`
 
 Minute parameter for cron metadata update job.
 
-- *Default*: ```*/1```
+- *Default*: `*/1`
 
-###cron_hour
+####`cron_hour`
 
 Hour parameter for cron metadata update job.
 
-- *Default*: ```*```
+- *Default*: `*`
 
-###changelog_limit
+####`changelog_limit`
 
 Number of changelog entries to import into metadata.
 
-- *Default*: ```5```
+- *Default*: `5`
 
-###checksum_type
+####`checksum_type`
 
-Sets the checksum type for repomd.xml. This needs to be set to ```sha``` if ```createrepo``` is defined on a RHEL/CentOS 6 host and is accessed by RHEL/CentOS 5 or earlier clients.
+Sets the checksum type for repomd.xml. This needs to be set to `sha` if `createrepo` is defined on a RHEL/CentOS 6 host and is accessed by RHEL/CentOS 5 or earlier clients.
 
-- *Default*: ```undef```
+- *Default*: `undef`
 
-###update_file_path
+####`update_file_path`
 
 Location of the repository update script file.
 
-- *Default*: ```/usr/local/bin/createrepo-update-${name}```
+- *Default*: `/usr/local/bin/createrepo-update-${name}`
 
-###suppress_cron_stdout
+####`suppress_cron_stdout`
 
 Redirect stdout output from cron to /dev/null.
 
-- *Default*: ```false```
+- *Default*: `false`
 
-###suppress_cron_stderr
+####`suppress_cron_stderr`
 
 Redirect stderr output from cron to /dev/null.
 
-- *Default*: ```false```
+- *Default*: `false`
 
-###groupfile
+####`groupfile`
 
 Yum repository groupfile. Creates the repository metadata with supplied group information.
 
-- *Default*: ```undef```
+- *Default*: `undef`
 
-###timeout
+####`timeout`
 
 Exec timeout for createrepo commands. Can be useful when repositories are huge. Can even be set to 0 to disable timeouts.
 
-- *Default*: ```300```
+- *Default*: `300`
 
-###manage_repo_dirs
+####`manage_repo_dirs`
 Manage the repository directory. If false the repository and cache directories must be created manually/externally.
 
-- *Default*: ```true```
+- *Default*: `true`
 
-##Running tests
+
+##Reference
+
+See [Usage](#usage)
+
+##Limitations
+
+createrepo is rspec tested on Puppet 2.7-3.7 and beaker tested on RHEL 5 and 6, Debian 7 and Ubuntu 12.04 with Puppet 3.x.
+
+##Development
+
+1. Fork the repo.
+
+2. Run the tests. We only take pull requests with passing tests, and
+   it's great to know that you have a clean slate
+
+3. Add a test for your change. Only refactoring and documentation
+   changes require no new tests. If you are adding functionality
+   or fixing a bug, please add a test.
+
+4. Make the test pass.
+
+5. Push to your fork and submit a pull request.
+
+###Running tests
 
 This project contains tests for both [rspec-puppet](http://rspec-puppet.com/) and [beaker-rspec](https://github.com/puppetlabs/beaker-rspec) to verify functionality. For in-depth information please see their respective documentation.
 
@@ -142,4 +194,5 @@ Quickstart:
     RS_DEBUG=yes bundle exec rspec spec/acceptance
 
 ##Issues
-Please log tickets and issues in the modules [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)
+
+Please log tickets and issues in the createrepo [GitHub issue tracker](https://github.com/pall-valmundsson/puppet-createrepo/issues)
