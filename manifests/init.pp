@@ -23,7 +23,7 @@
 #   Puppet will update repository on each run. Default: true
 #
 # [*cron_minute*]
-#   Minute parameter for cron metadata update job. Default: '*/1'
+#   Minute parameter for cron metadata update job. Default: '*/10'
 #
 # [*cron_hour*]
 #   Hour parameter for cron metadata update job. Default: '*'
@@ -78,7 +78,7 @@ define createrepo (
     $repo_owner           = 'root',
     $repo_group           = 'root',
     $enable_cron          = true,
-    $cron_minute          = '*/1',
+    $cron_minute          = '*/10',
     $cron_hour            = '*',
     $changelog_limit      = 5,
     $checksum_type        = undef,

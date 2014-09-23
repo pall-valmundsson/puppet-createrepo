@@ -94,7 +94,7 @@ Group of the repository directory.
 
 ####`enable_cron`
 
-Enable regular repository updates via cron or Puppet.
+Enable regular repository updates via cron. If `false` repositories will be updated on puppet runs.
 
 - *Default*: `true`
 
@@ -102,7 +102,7 @@ Enable regular repository updates via cron or Puppet.
 
 Minute parameter for cron metadata update job.
 
-- *Default*: `*/1`
+- *Default*: `*/10`
 
 ####`cron_hour`
 

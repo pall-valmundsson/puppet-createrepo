@@ -43,7 +43,7 @@ shared_examples "when using default parameters" do
     it "updates repository" do
         should contain_cron("update-createrepo-#{title}").with({
             'user'    => 'root',
-            'minute'  => '*/1',
+            'minute'  => '*/10',
             'hour'    => '*',
             'require' => "Exec[createrepo-#{title}]"
         })
@@ -218,7 +218,7 @@ shared_examples "when enable_cron" do |command_line|
             should contain_cron("update-createrepo-#{title}").with({
                 'command' => "#{command_line}",
                 'user'    => 'root',
-                'minute'  => '*/1',
+                'minute'  => '*/10',
                 'hour'    => '*',
                 'require' => "Exec[createrepo-#{title}]"
             })
