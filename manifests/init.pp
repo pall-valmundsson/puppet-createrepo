@@ -53,6 +53,9 @@
 #   Manage the repository directory. If false the repository and cache
 #   directories must be created manually/externally.
 #
+# [*database*]
+#   Control database option of createrepo command.
+#
 # === Variables
 #
 # None.
