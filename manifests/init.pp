@@ -53,6 +53,9 @@
 #   Manage the repository directory. If false the repository and cache
 #   directories must be created manually/externally.
 #
+# [*database*]
+#   Control database option of createrepo command.
+#
 # === Variables
 #
 # None.
@@ -87,7 +90,8 @@ define createrepo (
     $suppress_cron_stderr = false,
     $groupfile            = undef,
     $timeout              = 300,
-    $manage_repo_dirs     = true
+    $manage_repo_dirs     = true,
+    $database             = true
 ) {
     validate_absolute_path($repository_dir)
     validate_absolute_path($repo_cache_dir)
@@ -152,11 +156,18 @@ define createrepo (
         $_arg_groupfile = ''
     }
 
+    validate_bool($database)
+    if $database {
+        $_database = '--database'
+    } else {
+        $_database = '--no-database'
+    }
+
     $cmd = '/usr/bin/createrepo'
     $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
-    $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+    $createrepo_create = "${cmd} ${arg} ${_database} ${repository_dir}"
+    $createrepo_update = "${cmd} ${arg} ${_database} --update ${repository_dir}"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,

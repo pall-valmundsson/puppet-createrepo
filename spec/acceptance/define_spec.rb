@@ -19,9 +19,9 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
 
     describe cron do
       if fact('osfamily') != 'RedHat'
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo').with_user('root') }
+        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --database --update /var/yumrepos/test-repo').with_user('root') }
       else
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo').with_user('root') }
+        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --database --update /var/yumrepos/test-repo').with_user('root') }
       end
     end
 
@@ -31,9 +31,9 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
       if fact('osfamily') != 'RedHat'
-        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo' }
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --database --update /var/yumrepos/test-repo' }
       else
-        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo' }
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --database --update /var/yumrepos/test-repo' }
       end
     end
   end
