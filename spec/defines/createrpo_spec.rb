@@ -21,7 +21,7 @@ describe 'createrepo', :type => :define do
 
             it "update repository with correct command" do
                 should contain_cron("update-createrepo-#{title}").with({
-                    'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo",
+                    'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --database --update /var/yumrepos/testyumrepo",
                 })
             end
         end
@@ -30,14 +30,14 @@ describe 'createrepo', :type => :define do
             # The createrepo update command is :osfamily specific
             it "has the correct command" do
                 should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                    .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --changelog-limit 5 --update \/var\/yumrepos\/testyumrepo.*/)
+                    .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --changelog-limit 5 --database --update \/var\/yumrepos\/testyumrepo.*/)
             end
         end
 
         it_works_like "when using default parameters"
         it_works_like "when owner and group are provided"
         it_works_like "when repository_dir and repository_cache_dir are provided"
-        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo"
+        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --database --update /var/yumrepos/testyumrepo"
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
         it_works_like "when supplying invalid parameters"
@@ -78,20 +78,20 @@ describe 'createrepo', :type => :define do
 
         it "updates repository" do
             should contain_cron("update-createrepo-#{title}").with({
-                'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo",
+                'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --database --update /var/yumrepos/testyumrepo",
             })
         end
 
         # The createrepo update command is :osfamily specific
         it "update script has correct command" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --update \/var\/yumrepos\/testyumrepo.*/)
+                .with_content(/.*\/usr\/bin\/createrepo --cachedir \/var\/cache\/yumrepos\/testyumrepo --database --update \/var\/yumrepos\/testyumrepo.*/)
         end
 
         it_works_like "when using default parameters"
         it_works_like "when owner and group are provided"
         it_works_like "when repository_dir and repository_cache_dir are provided"
-        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo"
+        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --database --update /var/yumrepos/testyumrepo"
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
         it_works_like "when supplying invalid parameters"
