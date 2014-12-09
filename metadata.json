@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "Pall Valmundsson",
   "summary": "Manages creation of yum repositories",
-  "license": "GPLv3",
+  "license": "GPL-3.0+",
   "source": "https://github.com/pall-valmundsson/puppet-createrepo.git",
   "project_page": "https://github.com/pall-valmundsson/puppet-createrepo",
   "issues_url": "https://github.com/pall-valmundsson/puppet-createrepo/issues",
