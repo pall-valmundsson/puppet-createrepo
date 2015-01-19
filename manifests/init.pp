@@ -93,7 +93,9 @@ define createrepo (
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
     validate_string($repo_group)
-    if type($timeout) != 'integer' { fail('$timeout is not an integer') }
+    if !is_integer($timeout) {
+        fail('$timeout is not an integer')
+    }
 
 
     validate_bool($manage_repo_dirs)
@@ -114,7 +116,7 @@ define createrepo (
 
     case $::osfamily {
         'RedHat':{
-            if $changelog_limit =~ /^\d+$/ {
+            is_integer($changelog_limit) {
                 $_arg_changelog = " --changelog-limit ${changelog_limit}"
             } else {
                 $_arg_changelog = ''
