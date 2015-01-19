@@ -116,7 +116,7 @@ define createrepo (
 
     case $::osfamily {
         'RedHat':{
-            is_integer($changelog_limit) {
+            if is_integer($changelog_limit) {
                 $_arg_changelog = " --changelog-limit ${changelog_limit}"
             } else {
                 $_arg_changelog = ''
