@@ -114,7 +114,7 @@ define createrepo (
 
   case $::osfamily {
     'RedHat' : {
-      if $changelog_limit =~ /^\d+$/ {
+      if if is_integer($changelog_limit) {
         $_arg_changelog = " --changelog-limit ${changelog_limit}"
       } else {
         $_arg_changelog = ''
