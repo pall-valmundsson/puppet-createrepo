@@ -22,7 +22,7 @@
 
 The createrepo module allows you to create and update yum repositories.
 
-Tested on Puppet 2.7-3.7 on RHEL 5 and 6, Debian 7 and Ubuntu 12.04.
+Tested on Puppet 3.2-3.7 on RHEL 5 and 6, Debian 7 and Ubuntu 12.04.
 
 ##Module Description
 
