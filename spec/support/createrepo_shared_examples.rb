@@ -389,7 +389,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+            should raise_error(Puppet::Error, /is not a boolean/)
         end
     end
     context "for timeout" do
@@ -399,7 +399,7 @@ shared_examples "when supplying invalid parameters" do
             }
         end
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not an integer/)
+            should raise_error(Puppet::Error, /is not an integer/)
         end
     end
     context "for repository_dir" do
@@ -410,7 +410,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+            should raise_error(Puppet::Error, /is not an absolute path/)
         end
     end
     context "for repo_cache_dir" do
@@ -421,7 +421,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+            should raise_error(Puppet::Error, /is not an absolute path/)
         end
     end
     context "for enable_cron" do
@@ -432,7 +432,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+            should raise_error(Puppet::Error, /is not a boolean/)
         end
     end
     context "for update_file_path" do
@@ -443,7 +443,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not an absolute path/)
+            should raise_error(Puppet::Error, /is not an absolute path/)
         end
     end
     context "for suppress_cron_stdout" do
@@ -454,7 +454,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+            should raise_error(Puppet::Error, /is not a boolean/)
         end
     end
     context "for suppress_cron_stderr" do
@@ -465,7 +465,7 @@ shared_examples "when supplying invalid parameters" do
         end
 
         it 'should fail' do
-            expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+            should raise_error(Puppet::Error, /is not a boolean/)
         end
     end
 end
