@@ -153,7 +153,8 @@ define createrepo (
     }
 
     $cmd = '/usr/bin/createrepo'
-    $arg = "--cachedir ${repo_cache_dir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}"
+    $_arg_cachedir = "--cachedir ${repo_cache_dir}"
+    $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
