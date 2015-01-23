@@ -1,5 +1,6 @@
 Unreleased
 * Support for Puppet 2.7 removed
+* Fixes for future parser (#12)
 
 2014-23-09 - Version 1.0.0
 * Default value for cron_minute changed from */1 to */10
