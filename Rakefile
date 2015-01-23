@@ -17,4 +17,6 @@ desc 'Run spec and lint'
 task :ci => [
   :lint,
   :spec,
+  :syntax,
+  :validate,
 ]
