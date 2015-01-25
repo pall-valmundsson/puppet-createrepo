@@ -1,5 +1,7 @@
 require 'spec_helper_acceptance'
 
+FUTURE_PARSER = ENV['FUTURE_PARSER'] == 'yes'
+
 describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   context 'basic usage:' do
     it 'should work with no errors' do
@@ -10,7 +12,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
     end
 
     describe file('/var/yumrepos/test-repo/repodata') do
@@ -59,7 +61,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       EOS
         
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
     end
 
     it 'repodata should be accessible via http' do
