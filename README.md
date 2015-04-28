@@ -192,7 +192,8 @@ Quickstart:
     bundle exec rake spec
     bundle exec rspec spec/acceptance
     BEAKER_debug=yes bundle exec rspec spec/acceptance
-    BEAKER_set=debian-76-x64 bundle exec rspec spec/acceptance
+    BEAKER_set=centos-70-x64 bundle exec rspec spec/acceptance
+    BEAKER_set=debian-78-x64 bundle exec rspec spec/acceptance
 
 ##Issues
 
