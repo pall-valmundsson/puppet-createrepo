@@ -93,7 +93,7 @@ define createrepo (
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
     validate_string($repo_group)
-    if is_integer($timeout) == false {
+    unless is_integer($timeout) {
         fail('timeout is not an integer')
     }
 
