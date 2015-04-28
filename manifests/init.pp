@@ -94,7 +94,7 @@ define createrepo (
     validate_string($repo_owner)
     validate_string($repo_group)
     if is_integer($timeout) == false {
-        fail('$timeout is not an integer')
+        fail('timeout is not an integer')
     }
 
 
