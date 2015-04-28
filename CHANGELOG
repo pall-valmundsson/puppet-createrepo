@@ -1,5 +1,6 @@
 Unreleased
 * Support for Puppet 2.7 removed
+* Stop testing < Puppet 3.7
 * Fixes for future parser (#12)
 
 2014-23-09 - Version 1.0.0
