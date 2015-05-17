@@ -2,6 +2,7 @@ Unreleased
 * Support for Puppet 2.7 removed
 * Stop testing < Puppet 3.7
 * Fixes for future parser (#12)
+* Bumped min. required stdlib to 4.0
 
 2014-23-09 - Version 1.0.0
 * Default value for cron_minute changed from */1 to */10
