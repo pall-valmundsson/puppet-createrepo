@@ -8,7 +8,6 @@
   "project_page": "https://github.com/pall-valmundsson/puppet-createrepo",
   "issues_url": "https://github.com/pall-valmundsson/puppet-createrepo/issues",
   "tags": [
-    "rhel",
     "repositories",
     "repository",
     "yum",
