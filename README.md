@@ -1,6 +1,8 @@
 #createrepo
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/palli/createrepo.svg)](https://forge.puppetlabs.com/palli/createrepo)  [![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/palli/createrepo.svg)](https://forge.puppetlabs.com/palli/createrepo)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/palli/createrepo.svg)](https://forge.puppetlabs.com/palli/createrepo)
+[![Build Status](https://travis-ci.org/pall-valmundsson/puppet-createrepo.png)](https://travis-ci.org/pall-valmundsson/puppet-createrepo)
 
 ####Table of Contents
 
