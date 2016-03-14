@@ -74,6 +74,13 @@
 # [*cleanup_keep*]
 #   Set how many versions of each rpm to keep. Default: 2
 #
+# [*use_lockfile*]
+#   Prevents corruption of the repodata, when multiple createrepo processes
+#   start building repodata at the same time. (eg in combination with incrond)
+#
+# [*lockfile*]
+#   full path/name of the lockfile
+#
 # === Variables
 #
 # None.
@@ -116,6 +123,8 @@ define createrepo (
     $manage_repo_dirs     = true,
     $cleanup              = false,
     $cleanup_keep         = 2,
+    $use_lockfile         = false,
+    $lockfile             = "/tmp/createrepo-update-${name}.lock"
 ) {
     if $update_file_path != undef {
         $real_update_file_path = $update_file_path

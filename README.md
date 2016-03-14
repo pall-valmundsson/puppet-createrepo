@@ -197,6 +197,16 @@ Set how many versions of each rpm to keep.
 
 - *Default*: `2`
 
+### `use_lockfile`
+Prevents corruption of the repodata, when multiple createrepo processes
+start building repodata at the same time. (eg in combination with incrond)
+
+- *Default*: `false`
+
+### `lockfile`
+full path/name of the lockfile
+
+- *Default*: `/tmp/createrepo-update-${name}.lock`
 
 ## Reference
 

@@ -254,6 +254,18 @@ shared_examples "when repository_dir and repository_cache_dir are provided" do
     end
 end
 
+shared_examples "when use_lockfile" do
+    context "is true" do
+        let :params do
+            { :use_lockfile => true }
+        end
+        it "contents update exec" do
+            should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                .with_content(/.*flock -e.*/)
+        end
+    end
+end
+
 shared_examples "when enable_cron" do
     # FIXME figure out a clean way of getting rid of the command_line parameter
     context "is false" do
