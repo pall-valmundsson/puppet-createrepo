@@ -1,0 +1,17 @@
+HOSTS:
+  centos-7-x64_docker:
+    default_apply_opts:
+      order: random
+      strict_variables:
+    platform: el-7-x86_64
+    hypervisor : docker
+    image: centos:7
+    docker_preserve_image: true
+    docker_cmd: '["/usr/sbin/init"]'
+    docker_image_commands:
+      - 'yum install -y crontabs tar wget'
+      - 'mkdir -p /etc/selinux/targeted/contexts/'
+      - 'echo "<busconfig><selinux></selinux></busconfig>" > /etc/selinux/targeted/contexts/dbus_contexts'
+CONFIG:
+  type: foss
+  log_level: debug

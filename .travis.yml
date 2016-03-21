@@ -1,4 +1,5 @@
 language: ruby
+sudo: false
 bundler_args: --without system_tests
 rvm:
   - 1.9.3
@@ -17,6 +18,14 @@ env:
     - PUPPET_GEM_VERSION="~> 4.0.0" STRICT_VARIABLES="yes"
 matrix:
   fast_finish: true
+  include:
+    - rvm: default
+      sudo: required
+      dist: trusty
+      services: docker
+      env: BEAKER_set="centos-7_docker"
+      bundler_args:
+      script: sudo service docker restart ; sleep 10 && bundle exec rspec spec/acceptance
 notifications:
   email: false
 gemfile: Gemfile
