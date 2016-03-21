@@ -66,8 +66,8 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
 
     it 'repodata should be accessible via http' do
       shell("/usr/bin/curl yum.foo.local:80/test-repo/repodata/") do |r|
-        r.stdout.should =~ /primary.xml/
-        r.exit_code.should == 0
+        expect(r.stdout).to match(/primary.xml/)
+        expect(r.exit_code).to be_zero
       end
     end
   end
