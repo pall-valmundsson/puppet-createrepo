@@ -86,6 +86,7 @@ define createrepo (
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
     $groupfile            = undef,
+    $workers              = undef,
     $timeout              = 300,
     $manage_repo_dirs     = true
 ) {
@@ -154,9 +155,15 @@ define createrepo (
         $_arg_groupfile = ''
     }
 
+    if $workers {
+      $_arg_workers = " --workers ${workers}"
+    } else {
+      $_arg_workers = ''
+    }
+
     $cmd = '/usr/bin/createrepo'
     $_arg_cachedir = "--cachedir ${repo_cache_dir}"
-    $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}"
+    $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
