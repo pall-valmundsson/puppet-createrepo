@@ -94,6 +94,18 @@ Group of the repository directory.
 
 - *Default*: `root`
 
+####`mode`
+
+Mode of the repository directory.
+
+- *Default*: '775'
+
+####`recurse`
+
+Enable recursive managing of the repository directory.
+
+- *Default*: false
+
 ####`enable_cron`
 
 Enable regular repository updates via cron. If `false` repositories will be updated on puppet runs.

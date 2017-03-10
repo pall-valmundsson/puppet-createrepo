@@ -18,6 +18,12 @@
 # [*repo_group*]
 #   Group of the repository directory. Default: 'root'
 #
+# [*remp_mode*]
+#   Mode of the repository directory. Default: '775'
+#
+# [*repo_recurse*]
+#   Enable recursive managing of the repository directory. Default: false
+#
 # [*enable_cron*]
 #   Enable automatic repository updates by cron. If disabled,
 #   Puppet will update repository on each run. Default: true
@@ -77,6 +83,8 @@ define createrepo (
     $repo_cache_dir       = "/var/cache/yumrepos/${name}",
     $repo_owner           = 'root',
     $repo_group           = 'root',
+    $remp_mode            = '0775',
+    $repo_recurse         = false,
     $enable_cron          = true,
     $cron_minute          = '*/10',
     $cron_hour            = '*',
@@ -101,10 +109,11 @@ define createrepo (
     validate_bool($manage_repo_dirs)
     if $manage_repo_dirs {
         file { [$repository_dir, $repo_cache_dir]:
-            ensure => directory,
-            owner  => $repo_owner,
-            group  => $repo_group,
-            mode   => '0775',
+            ensure  => directory,
+            owner   => $repo_owner,
+            group   => $repo_group,
+            mode    => $remp_mode,
+            recurse => $repo_recurse,
         }
     }
 
