@@ -7,16 +7,16 @@ rvm:
   - 2.1.7
   - 2.2.6
   - 2.3.3
-script: "bundle exec metadata-json-lint --strict-license --fail-on-warnings metadata.json && bundle exec rake ci SPEC_OPTS='--format documentation'"
+script: "bundle exec rake ${CHECK}"
 branches:
   only:
     - master
 env:
   matrix:
-    - PUPPET_GEM_VERSION="~> 3.8.0"
-    - PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
-    - PUPPET_GEM_VERSION="~> 4.0"
-    - PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+    - CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
+    - CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+    - CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
+    - CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
 matrix:
   fast_finish: true
   include:
@@ -24,40 +24,51 @@ matrix:
       sudo: required
       dist: trusty
       services: docker
-      env: BEAKER_set="centos-7_docker"
+      env: CHECK="beaker" BEAKER_set="centos-7_docker"
       bundler_args:
-      script: sudo service docker restart ; sleep 10 && bundle exec rspec spec/acceptance
+      before_script: sudo service docker restart ; sleep 10
     - rvm: default
       sudo: required
       dist: trusty
       services: docker
-      env: BEAKER_set="centos-6_docker"
+      env: CHECK="beaker" BEAKER_set="centos-6_docker"
       bundler_args:
-      script: sudo service docker restart ; sleep 10 && bundle exec rspec spec/acceptance
+      before_script: sudo service docker restart ; sleep 10
     - rvm: default
       sudo: required
       dist: trusty
       services: docker
-      env: BEAKER_set="ubuntu-14.04_docker"
+      env: CHECK="beaker" BEAKER_set="ubuntu-14.04_docker"
       bundler_args:
-      script: sudo service docker restart ; sleep 10 && bundle exec rspec spec/acceptance
+      before_script: sudo service docker restart ; sleep 10
+    - rvm: default
+      env: CHECK="build" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" DEPLOY_TO_FORGE=yes
   exclude:
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 4.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
     - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION="~> 4.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
     - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
     - rvm: 2.2.6
-      env: PUPPET_GEM_VERSION="~> 3.8.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
     - rvm: 2.2.6
-      env: PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
     - rvm: 2.3.3
-      env: PUPPET_GEM_VERSION="~> 3.8.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
     - rvm: 2.3.3
-      env: PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
 notifications:
   email: false
 gemfile: Gemfile
+deploy:
+  provider: puppetforge
+  user: palli
+  password:
+    secure: "cCrCOQRK2sm1IzsU9yZ3cyLUwcDHWqay7VYh60u8uKi01kmOcxn74GtkaCggzfhVopuIfwWCAl2quVMnHpHYFIkunkYTPwM0pJY/I+jDd0d+hRl4cPM+JjBrlUXQ3RSg6fjxKyY1yVTf0/fCN4PxV3GaWjgqW1C7NTwNVJYwNwE="
+  on:
+    tags: true
+    # Only publish the build marked with "DEPLOY_TO_FORGE"
+    condition: "$DEPLOY_TO_FORGE = yes"
