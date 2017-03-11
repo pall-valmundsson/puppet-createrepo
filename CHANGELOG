@@ -1,3 +1,6 @@
+unreleased - Version 1.2.0
+* Add support for "workers" parameter (#19)
+
 2015-08-10 - Version 1.1.0
 * Support for Puppet 2.7 removed
 * Stop testing < Puppet 3.7
