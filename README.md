@@ -24,13 +24,11 @@
 
 The createrepo module allows you to create and update yum repositories.
 
-Tested on Puppet 3.7 on RHEL 5 and 6, Debian 7 and Ubuntu 12.04 and 14.04.
-
 ##Module Description
 
 Yum repositories are a distribution method for RPM packages usually served via HTTP. The createrepo module creates yum repositories and it's metadata caches.
 It also provides mechanisms to update the repositories with an optional cron job and an update script, which is useful for post hooks in CI environments.
-    
+
 It does not manage the directory tree up to the root of the repository and does neither make any attempt to manage a HTTP server for repository clients.
 
 ##Setup
@@ -40,9 +38,9 @@ It does not manage the directory tree up to the root of the repository and does 
 * repository and cache directories
 * createrepo package
 * cron jobs for repo updates (optional)
-* an update script, placed in /usr/local/bin by default 
+* an update script, placed in /usr/local/bin by default
 
-###Beginning with createrepo	
+###Beginning with createrepo
 
 Basic example:
 
@@ -189,7 +187,7 @@ See [Usage](#usage)
 
 ##Limitations
 
-createrepo is rspec tested on Puppet 2.7-3.7 and beaker tested on RHEL 5 and 6, Debian 7 and Ubuntu 12.04 with Puppet 3.x.
+createrepo is rspec tested on Puppet 3.8-4.x latest and beaker tested on CentOS 6, 7 and Ubuntu 14.04 with Puppet latest.
 
 ##Development
 

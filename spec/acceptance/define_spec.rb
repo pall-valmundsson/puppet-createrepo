@@ -59,7 +59,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
         }
         host { 'yum.foo.local': ip => '127.0.0.1', }
       EOS
-        
+
       apply_manifest(pp, :catch_failures => true)
       expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
     end
