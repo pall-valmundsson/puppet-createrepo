@@ -14,14 +14,17 @@ shared_examples "when using default parameters" do
     end
 
     it "creates directories" do
-        should contain_file('/var/yumrepos/testyumrepo').with({
-            'ensure' => 'directory',
-            'owner'  => 'root',
-            'group'  => 'root',
-            'mode'   => '0775',
+        should contain_file('/var/yumrepos/testyumrepo').only_with({
+            'path'    => '/var/yumrepos/testyumrepo',
+            'ensure'  => 'directory',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0775',
+            'seltype' => 'httpd_sys_content_t',
         })
 
-        should contain_file('/var/cache/yumrepos/testyumrepo').with({
+        should contain_file('/var/cache/yumrepos/testyumrepo').only_with({
+            'path'   => '/var/cache/yumrepos/testyumrepo',
             'ensure' => 'directory',
             'owner'  => 'root',
             'group'  => 'root',

@@ -18,6 +18,9 @@
 # [*repo_group*]
 #   Group of the repository directory. Default: 'root'
 #
+# [*repo_seltype*]
+#   Set the SELinux type for the repo directory.
+#
 # [*enable_cron*]
 #   Enable automatic repository updates by cron. If disabled,
 #   Puppet will update repository on each run. Default: true
@@ -73,13 +76,14 @@
 #
 # === Copyright
 #
-# Copyright 2012-2014 Páll Valmundsson, unless otherwise noted.
+# Copyright 2012-2017 Páll Valmundsson, unless otherwise noted.
 #
 define createrepo (
     $repository_dir       = "/var/yumrepos/${name}",
     $repo_cache_dir       = "/var/cache/yumrepos/${name}",
     $repo_owner           = 'root',
     $repo_group           = 'root',
+    $repo_seltype         = 'httpd_sys_content_t',
     $enable_cron          = true,
     $cron_minute          = '*/10',
     $cron_hour            = '*',
@@ -104,7 +108,14 @@ define createrepo (
 
     validate_bool($manage_repo_dirs)
     if $manage_repo_dirs {
-        file { [$repository_dir, $repo_cache_dir]:
+        file { $repository_dir:
+            ensure  => directory,
+            owner   => $repo_owner,
+            group   => $repo_group,
+            mode    => '0775',
+            seltype => $repo_seltype,
+        }
+        file { $repo_cache_dir:
             ensure => directory,
             owner  => $repo_owner,
             group  => $repo_group,

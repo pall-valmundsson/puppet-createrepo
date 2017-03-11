@@ -94,6 +94,11 @@ Group of the repository directory.
 
 - *Default*: `root`
 
+####`repo_seltype`
+Set the SELinux type for the repository directory.
+
+- *Default*: `httpd_sys_content_t`
+
 ####`enable_cron`
 
 Enable regular repository updates via cron. If `false` repositories will be updated on puppet runs.
