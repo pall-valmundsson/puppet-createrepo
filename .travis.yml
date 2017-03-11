@@ -45,21 +45,21 @@ matrix:
       env: CHECK="build" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" DEPLOY_TO_FORGE=yes
   exclude:
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 4.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
     - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION="~> 4.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
     - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
     - rvm: 2.2.6
-      env: PUPPET_GEM_VERSION="~> 3.8.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
     - rvm: 2.2.6
-      env: PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
     - rvm: 2.3.3
-      env: PUPPET_GEM_VERSION="~> 3.8.0"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
     - rvm: 2.3.3
-      env: PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
 notifications:
   email: false
 gemfile: Gemfile
