@@ -98,7 +98,7 @@ Group of the repository directory.
 
 Mode of the repository directory.
 
-- *Default*: '775'
+- *Default*: '0775'
 
 ####`repo_recurse`
 
