@@ -94,6 +94,18 @@ Group of the repository directory.
 
 - *Default*: `root`
 
+####`repo_mode`
+
+Mode of the repository directory.
+
+- *Default*: '0775'
+
+####`repo_recurse`
+
+Enable recursive managing of the repository directory.
+
+- *Default*: false
+
 ####`repo_seltype`
 Set the SELinux type for the repository directory.
 

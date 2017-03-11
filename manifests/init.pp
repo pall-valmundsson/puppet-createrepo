@@ -18,6 +18,12 @@
 # [*repo_group*]
 #   Group of the repository directory. Default: 'root'
 #
+# [*repo_mode*]
+#   Mode of the repository directory. Default: '775'
+#
+# [*repo_recurse*]
+#   Enable recursive managing of the repository directory. Default: false
+#
 # [*repo_seltype*]
 #   Set the SELinux type for the repo directory.
 #
@@ -83,6 +89,8 @@ define createrepo (
     $repo_cache_dir       = "/var/cache/yumrepos/${name}",
     $repo_owner           = 'root',
     $repo_group           = 'root',
+    $repo_mode            = '0775',
+    $repo_recurse         = false,
     $repo_seltype         = 'httpd_sys_content_t',
     $enable_cron          = true,
     $cron_minute          = '*/10',
@@ -112,7 +120,8 @@ define createrepo (
             ensure  => directory,
             owner   => $repo_owner,
             group   => $repo_group,
-            mode    => '0775',
+            mode    => $repo_mode,
+            recurse => $repo_recurse,
             seltype => $repo_seltype,
         }
         file { $repo_cache_dir:

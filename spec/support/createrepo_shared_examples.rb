@@ -20,6 +20,7 @@ shared_examples "when using default parameters" do
             'owner'   => 'root',
             'group'   => 'root',
             'mode'    => '0775',
+            'recurse' => false,
             'seltype' => 'httpd_sys_content_t',
         })
 
@@ -300,6 +301,32 @@ shared_examples "when directory should not be managed" do
     it "creates directories" do
         should_not contain_file('/var/yumrepos/testyumrepo')
         should_not contain_file('/var/cache/yumrepos/testyumrepo')
+    end
+end
+
+shared_examples "when repo directory mode is changed" do
+    let :params do
+        {
+            :repo_mode => '0777',
+        }
+    end
+    it "creates directories with mode" do
+        should contain_file('/var/yumrepos/testyumrepo').with(
+            :mode => '0777',
+        )
+    end
+end
+
+shared_examples "when repo directory recurse is changed" do
+    let :params do
+        {
+            :repo_recurse => true,
+        }
+    end
+    it "creates directories with recurse set" do
+        should contain_file('/var/yumrepos/testyumrepo').with(
+            :recurse => true,
+        )
     end
 end
 

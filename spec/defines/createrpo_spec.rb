@@ -45,6 +45,8 @@ describe 'createrepo', :type => :define do
         it_works_like "when workers is set"
         it_works_like "when exec timeout is provided"
         it_works_like "when directory should not be managed"
+        it_works_like "when repo directory mode is changed"
+        it_works_like "when repo directory recurse is changed"
 
         context "works with changelog limit modifications" do
             let :params do
@@ -100,6 +102,8 @@ describe 'createrepo', :type => :define do
         it_works_like "when workers is set"
         it_works_like "when exec timeout is provided"
         it_works_like "when directory should not be managed"
+        it_works_like "when repo directory mode is changed"
+        it_works_like "when repo directory recurse is changed"
 
         context "works with changelog limit modifications" do
             let :params do
