@@ -6,6 +6,7 @@ group :development, :test do
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint',             :require => false
   gem 'metadata-json-lint',      :require => false
+  gem 'puppet-blacksmith',       :require => false
 end
 
 group :system_tests do
