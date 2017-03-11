@@ -142,6 +142,12 @@ Redirect stderr output from cron to /dev/null.
 
 - *Default*: `false`
 
+####`workers`
+
+Number of workers to spawn to read RPMs.
+
+- *Default*: `undef`
+
 ####`groupfile`
 
 Yum repository groupfile. Creates the repository metadata with supplied group information.

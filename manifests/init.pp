@@ -46,6 +46,9 @@
 # [*groupfile*]
 #   Provide a groupfile, e.g. comps.xml
 #
+# [*workers*]
+#   Number of workers to spawn to read RPMs.
+#
 # [*timeout*]
 #   Exec timeout for createrepo commands.
 #

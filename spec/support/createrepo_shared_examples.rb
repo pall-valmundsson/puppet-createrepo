@@ -251,6 +251,15 @@ shared_examples "when groupfile is provided" do
     it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --groupfile comps.xml .*$/
 end
 
+shared_examples "when workers is set" do
+    let :params do
+        {
+            :workers => 5,
+        }
+    end
+    it_behaves_like "createrepo command changes", /^\/usr\/bin\/createrepo .* --workers 5 .*$/
+end
+
 shared_examples "when exec timeout is provided" do
     let :params do
         {
