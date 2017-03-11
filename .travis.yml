@@ -11,6 +11,7 @@ script: "bundle exec rake ${CHECK}"
 branches:
   only:
     - master
+    - /^v\d/
 env:
   matrix:
     - CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
