@@ -97,7 +97,7 @@ define createrepo (
     $cron_hour            = '*',
     $changelog_limit      = 5,
     $checksum_type        = undef,
-    $update_file_path     = "/usr/local/bin/createrepo-update-${name}",
+    $update_file_path     = undef,
     $suppress_cron_stdout = false,
     $suppress_cron_stderr = false,
     $groupfile            = undef,
@@ -105,6 +105,13 @@ define createrepo (
     $timeout              = 300,
     $manage_repo_dirs     = true
 ) {
+    if $update_file_path != undef {
+        $real_update_file_path = $update_file_path
+    }
+    else {
+        $adjusted_name = regsubst($name, '/', '-', 'G')
+        $real_update_file_path = "/usr/local/bin/createrepo-update-${adjusted_name}"
+    }
     validate_absolute_path($repository_dir)
     validate_absolute_path($repo_cache_dir)
     validate_string($repo_owner)
@@ -223,8 +230,8 @@ define createrepo (
         }
     }
 
-    validate_absolute_path($update_file_path)
-    file { $update_file_path:
+    validate_absolute_path($real_update_file_path)
+    file { $real_update_file_path:
         ensure  => 'present',
         owner   => $repo_owner,
         group   => $repo_group,
