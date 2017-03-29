@@ -40,6 +40,45 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
     end
   end
 
+  context 'with slash in repo name:' do
+    it 'should work with no errors' do
+      pp = <<-EOS
+        file { '/var/yumrepos': ensure => directory, }
+        file { '/var/yumrepos/el6': ensure => directory, }
+        file { '/var/cache/yumrepos': ensure => directory, }
+        file { '/var/cache/yumrepos/el6': ensure => directory, }
+        createrepo { 'el6/test-repo': }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
+    end
+
+    describe file('/var/yumrepos/el6/test-repo/repodata') do
+      it { should be_directory }
+    end
+
+    describe cron do
+      if fact('osfamily') != 'RedHat'
+        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --update /var/yumrepos/el6/test-repo').with_user('root') }
+      else
+        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --changelog-limit 5 --update /var/yumrepos/el6/test-repo').with_user('root') }
+      end
+    end
+
+    describe file('/usr/local/bin/createrepo-update-el6-test-repo') do
+      it { should be_file }
+      it { should be_mode '755' }
+      it { should be_owned_by 'root' }
+      it { should be_grouped_into 'root' }
+      if fact('osfamily') != 'RedHat'
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --update /var/yumrepos/el6/test-repo' }
+      else
+        it { should contain '/usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --changelog-limit 5 --update /var/yumrepos/el6/test-repo' }
+      end
+    end
+  end
+
   context 'with apache configuration:' do
     it 'should work with no errors' do
       pp = <<-EOS

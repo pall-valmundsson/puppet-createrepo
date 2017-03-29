@@ -34,7 +34,7 @@ shared_examples "when using default parameters" do
     end
 
     # The createrepo command is :osfamily specific
-    it "creates repository" do 
+    it "creates repository" do
         should contain_exec("createrepo-#{title}").with({
             'user'    => 'root',
             'group'   => 'root',
@@ -62,13 +62,68 @@ shared_examples "when using default parameters" do
                 'mode'   => '0755',
             })
         end
-        
+
         # The createrepo update command is :osfamily specific
         it "with correct user check" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
                 .with_content(/.*\$\(whoami\) != 'root'.*/) \
                 .with_content(/.*You really should be root.*/)
         end
+    end
+end
+
+shared_examples "when name contains slashes" do
+    let :params do
+        {
+            :name => 'el7/common',
+        }
+    end
+
+    it "affects update script name" do
+        should contain_file("/usr/local/bin/createrepo-update-el7-common").with({
+            'ensure' => 'present',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+        })
+    end
+
+    it "creates directories" do
+        should contain_file('/var/yumrepos/el7/common').with({
+            'path'    => '/var/yumrepos/el7/common',
+            'ensure'  => 'directory',
+        })
+
+        should contain_file('/var/cache/yumrepos/el7/common').with({
+            'path'   => '/var/cache/yumrepos/el7/common',
+            'ensure' => 'directory',
+        })
+    end
+
+    it "updates repository" do
+        should contain_cron("update-createrepo-el7/common").with({
+            'user'    => 'root',
+            'minute'  => '*/10',
+            'hour'    => '*',
+            'require' => "Exec[createrepo-el7/common]"
+        })
+    end
+end
+
+shared_examples "when update_file_path is provided" do
+    let :params do
+        {
+            :update_file_path => '/usr/local/bin/update_repo.sh',
+        }
+    end
+
+    it "affects update script" do
+        should contain_file("/usr/local/bin/update_repo.sh").with({
+            'ensure' => 'present',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+        })
     end
 end
 
@@ -333,7 +388,7 @@ end
 shared_examples "createrepo command changes" do |command_matcher|
     # This shared example takes a regex and matches against all
     # createrepo commands
-    it "affects repository creation" do 
+    it "affects repository creation" do
         should contain_exec("createrepo-#{title}").with({
             'command' => command_matcher,
         })
