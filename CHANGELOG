@@ -1,3 +1,6 @@
+Unreleased - Version 2.1.0
+* Add support for subdirectories in repo name (#27)
+
 2017-11-03 - Version 2.0.0
 * Add support for "workers" parameter (#19)
 * Support SELinux type for the repo directory
