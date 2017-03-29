@@ -28,7 +28,12 @@ RSpec.configure do |c|
         # Install module
         puppet_module_install(:source => proj_root, :module_name => 'createrepo')
         hosts.each do |host|
-            on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+            # Workaround for https://tickets.puppetlabs.com/browse/MODULES-4559
+            if fact('operatingsystemmajrelease') == '6'
+                on host, puppet('module','install','puppetlabs-stdlib', '--version', '4.15.0'), { :acceptable_exit_codes => [0,1] }
+            else
+                on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+            end
             on host, puppet('module','install','puppetlabs-apache'), { :acceptable_exit_codes => [0,1] }
             # Debian docker image doesn't contain cron
             apply_manifest_on host, 'package { "anacron": ensure => installed }' if fact('osfamily') == 'Debian'
