@@ -24,6 +24,9 @@
 # [*repo_recurse*]
 #   Enable recursive managing of the repository directory. Default: false
 #
+# [*repo_ignore*]
+#   Ignore-list for recursive managing of the repository directory. Default: undef
+#
 # [*repo_seltype*]
 #   Set the SELinux type for the repo directory.
 #
@@ -91,6 +94,7 @@ define createrepo (
     $repo_group           = 'root',
     $repo_mode            = '0775',
     $repo_recurse         = false,
+    $repo_ignore          = undef,
     $repo_seltype         = 'httpd_sys_content_t',
     $enable_cron          = true,
     $cron_minute          = '*/10',
@@ -129,6 +133,7 @@ define createrepo (
             group   => $repo_group,
             mode    => $repo_mode,
             recurse => $repo_recurse,
+            ignore  => $repo_ignore,
             seltype => $repo_seltype,
         }
         file { $repo_cache_dir:

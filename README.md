@@ -105,6 +105,12 @@ Enable recursive managing of the repository directory.
 
 - *Default*: false
 
+####`repo_ignore`
+
+Ignore-list for recursive managing of the repository directory.
+
+- *Default*: undef
+
 ####`repo_seltype`
 Set the SELinux type for the repository directory.
 
