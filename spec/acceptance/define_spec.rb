@@ -110,4 +110,41 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
       end
     end
   end
+
+  context 'with mixed owner/group and recurse set and ignore on repodata directory' do
+    it 'should not affect the repodata directory' do
+      pp = <<-EOS
+        file { '/var/yumrepos': ensure => directory, }
+        file { '/var/cache/yumrepos': ensure => directory, }
+        createrepo { 'test-repo-ignore':
+          repo_owner => 'root',
+          repo_group => 'wheel',
+          repo_recurse => true,
+          repo_ignore => ['repodata'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
+      shell('ls -l /var/yumrepos/test-repo-ignore') # will only show in debug
+      # Run createrepo as root, this will change the group of repodata to root
+      shell('/usr/local/bin/createrepo-update-test-repo-ignore')
+      shell('ls -l /var/yumrepos/test-repo-ignore') # will only show in debug
+      # Running the manifest again to ensure idempotency with recurse as we're ignoring the repodata directory
+      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
+      shell('ls -l /var/yumrepos/test-repo-ignore') # will only show in debug
+    end
+
+    describe file('/var/yumrepos/test-repo-ignore/repodata') do
+      it { should be_directory }
+      it { should be_owned_by 'root' }
+      # Initially the repodata directory will be owned by wheel
+      # but when updating the repo the group of repodata will
+      # become root and as the repo_ignore parameter is set
+      # to ignore it the repo_recurse parameter will not affect
+      # the group of the directory
+      it { should be_grouped_into 'root' }
+    end
+
+  end
 end
