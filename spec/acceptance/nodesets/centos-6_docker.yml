@@ -13,4 +13,4 @@ HOSTS:
       - 'yum install -y crontabs tar wget'
 CONFIG:
   type: foss
-  log_level: debug
+  #log_level: debug

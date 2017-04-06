@@ -14,4 +14,4 @@ HOSTS:
       - 'echo "<busconfig><selinux></selinux></busconfig>" > /etc/selinux/targeted/contexts/dbus_contexts'
 CONFIG:
   type: foss
-  log_level: debug
+  #log_level: debug
