@@ -118,7 +118,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
         file { '/var/cache/yumrepos': ensure => directory, }
         createrepo { 'test-repo-ignore':
           repo_owner => 'root',
-          repo_group => 'wheel',
+          repo_group => 'daemon',
           repo_recurse => true,
           repo_ignore => ['repodata'],
         }
