@@ -392,13 +392,10 @@ shared_examples "when repo directory recurse is changed and ignore is used" do
             :repo_ignore  => ['repodata'],
         }
     end
-    it "creates directories with recurse set" do
+    it "creates repo directory with recurse and ignore set" do
         should contain_file('/var/yumrepos/testyumrepo').with(
             :recurse => true,
-        )
-    it "creates ignored directories with recurse not set"
-        should contain_file('/var/yumrepos/testyumrepo/repodata').with(
-            :recurse => false,
+            :ignore => ['repodata'],
         )
     end
 end
