@@ -385,6 +385,21 @@ shared_examples "when repo directory recurse is changed" do
     end
 end
 
+shared_examples "when repo directory recurse is changed and ignore is used" do
+    let :params do
+        {
+            :repo_recurse => true,
+            :repo_ignore  => ['repodata'],
+        }
+    end
+    it "creates repo directory with recurse and ignore set" do
+        should contain_file('/var/yumrepos/testyumrepo').with(
+            :recurse => true,
+            :ignore => ['repodata'],
+        )
+    end
+end
+
 shared_examples "createrepo command changes" do |command_matcher|
     # This shared example takes a regex and matches against all
     # createrepo commands
