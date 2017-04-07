@@ -1,6 +1,6 @@
 {
   "name": "palli-createrepo",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Pall Valmundsson",
   "summary": "Manages creation of yum repositories",
   "license": "GPL-3.0+",
