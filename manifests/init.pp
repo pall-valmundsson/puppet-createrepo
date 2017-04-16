@@ -201,7 +201,7 @@ define createrepo (
     $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+    $createrepo_update = "${cmd} ${arg} --update ${repository_dir} >/dev/null 2>&1"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,
