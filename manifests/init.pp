@@ -141,6 +141,7 @@ define createrepo (
             owner  => $repo_owner,
             group  => $repo_group,
             mode   => '0775',
+            seltype=> 'httpd_sys_content_t',
         }
     }
 
