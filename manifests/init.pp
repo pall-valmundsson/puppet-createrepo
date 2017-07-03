@@ -31,8 +31,11 @@
 #   Set the SELinux type for the repo directory.
 #
 # [*enable_cron*]
-#   Enable automatic repository updates by cron. If disabled,
-#   Puppet will update repository on each run. Default: true
+#   Enable automatic repository updates by cron. Default: true
+#
+# [*enable_update*]
+#   Enable automatic repository updates during the puppet run.
+#   Default: false
 #
 # [*cron_minute*]
 #   Minute parameter for cron metadata update job. Default: '*/10'
@@ -97,6 +100,7 @@ define createrepo (
     $repo_ignore          = undef,
     $repo_seltype         = 'httpd_sys_content_t',
     $enable_cron          = true,
+    $enable_update        = false,
     $cron_minute          = '*/10',
     $cron_hour            = '*',
     $changelog_limit      = 5,
@@ -225,7 +229,9 @@ define createrepo (
             hour    => $cron_hour,
             require => Exec["createrepo-${name}"],
         }
-    } else {
+    }
+
+    if $enable_update {
         exec { "update-createrepo-${name}":
             command => $createrepo_update,
             user    => $repo_owner,
