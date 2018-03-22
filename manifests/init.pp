@@ -162,6 +162,7 @@ define createrepo (
     if $cleanup and ! defined(Package['yum-utils']) {
         package { 'yum-utils':
             ensure => present,
+            before => File[$real_update_file_path],
         }
     }
 

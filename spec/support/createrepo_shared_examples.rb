@@ -49,7 +49,7 @@ shared_examples "when using default parameters" do
             'user'    => 'root',
             'minute'  => '*/10',
             'hour'    => '*',
-            'require' => "Exec[createrepo-#{title}]"
+            'require' => ["Exec[createrepo-#{title}]", "File[/usr/local/bin/createrepo-update-#{title}]"]
         })
     end
 
@@ -105,7 +105,7 @@ shared_examples "when name contains slashes" do
             'user'    => 'root',
             'minute'  => '*/10',
             'hour'    => '*',
-            'require' => "Exec[createrepo-el7/common]"
+            'require' => ["Exec[createrepo-el7/common]", 'File[/usr/local/bin/createrepo-update-el7-common]']
         })
     end
 end
@@ -228,7 +228,7 @@ shared_examples "when repository_dir and repository_cache_dir are provided" do
             end
             it "affects cron job" do
                 should contain_cron("update-createrepo-#{title}").with({
-                    'command' => /^\/usr\/bin\/createrepo.*--cachedir \/var\/cache\/myrepos\/repo1.*--update \/var\/myrepos\/repo1$/
+                    'command' => "/usr/local/bin/createrepo-update-#{title}"
                 })
             end
         end
@@ -240,7 +240,7 @@ shared_examples "when repository_dir and repository_cache_dir are provided" do
             end
             it "affects update exec" do
                 should contain_exec("update-createrepo-#{title}").with({
-                    'command' => /^\/usr\/bin\/createrepo.*--cachedir \/var\/cache\/myrepos\/repo1.*--update \/var\/myrepos\/repo1$/
+                    'command' => "/usr/local/bin/createrepo-update-#{title}"
                 })
             end
         end
@@ -254,7 +254,7 @@ shared_examples "when repository_dir and repository_cache_dir are provided" do
     end
 end
 
-shared_examples "when enable_cron" do |command_line|
+shared_examples "when enable_cron" do
     # FIXME figure out a clean way of getting rid of the command_line parameter
     context "is false" do
         let :params do
@@ -262,10 +262,10 @@ shared_examples "when enable_cron" do |command_line|
         end
         it "it should exec createrepo update" do
             should contain_exec("update-createrepo-#{title}").with({
-                'command' => "#{command_line}",
+                'command' => "/usr/local/bin/createrepo-update-#{title}",
                 'user'    => 'root',
                 'group'   => 'root',
-                'require' => "Exec[createrepo-#{title}]"
+                'require' => ["Exec[createrepo-#{title}]", "File[/usr/local/bin/createrepo-update-#{title}]"]
             })
         end
     end
@@ -275,11 +275,11 @@ shared_examples "when enable_cron" do |command_line|
         end
         it "it should contain cron entry" do
             should contain_cron("update-createrepo-#{title}").with({
-                'command' => "#{command_line}",
+                'command' => "/usr/local/bin/createrepo-update-#{title}",
                 'user'    => 'root',
                 'minute'  => '*/10',
                 'hour'    => '*',
-                'require' => "Exec[createrepo-#{title}]"
+                'require' => ["Exec[createrepo-#{title}]", "File[/usr/local/bin/createrepo-update-#{title}]"]
             })
         end
     end
@@ -425,7 +425,7 @@ shared_examples "createrepo command changes" do |command_matcher|
             end
             it "affects repo updates via cron" do
                 should contain_cron("update-createrepo-#{title}").with({
-                    'command' => command_matcher,
+                    'command' => "/usr/local/bin/createrepo-update-#{title}",
                 })
             end
         end
@@ -437,7 +437,7 @@ shared_examples "createrepo command changes" do |command_matcher|
             end
             it "affects repo updates via exec" do
                 should contain_exec("update-createrepo-#{title}").with({
-                    'command' => command_matcher,
+                    'command' => "/usr/local/bin/createrepo-update-#{title}",
                 })
             end
         end

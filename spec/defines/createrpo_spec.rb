@@ -13,7 +13,7 @@ describe 'createrepo', :type => :define do
 
         # The createrepo command is :osfamily specific
         describe "it uses createrepo to" do
-            it "create repository with correct command" do 
+            it "create repository with correct command" do
                 should contain_exec("createrepo-#{title}").with({
                     'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --database /var/yumrepos/testyumrepo",
                 })
@@ -21,7 +21,7 @@ describe 'createrepo', :type => :define do
 
             it "update repository with correct command" do
                 should contain_cron("update-createrepo-#{title}").with({
-                    'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo",
+                    'command' => "/usr/local/bin/createrepo-update-#{title}",
                 })
             end
         end
@@ -37,7 +37,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when using default parameters"
         it_works_like "when owner and group are provided"
         it_works_like "when repository_dir and repository_cache_dir are provided"
-        it_works_like "when enable_cron", "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --changelog-limit 5 --update /var/yumrepos/testyumrepo"
+        it_works_like "when enable_cron"
         it_works_like "when suppressing cron output"
         it_works_like "when cron schedule is modified"
         it_works_like "when supplying invalid parameters"
@@ -76,7 +76,7 @@ describe 'createrepo', :type => :define do
         end
 
         # The createrepo command is :osfamily specific
-        it "creates repository" do 
+        it "creates repository" do
             should contain_exec("createrepo-#{title}").with({
                 'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --database /var/yumrepos/testyumrepo",
             })
@@ -84,7 +84,7 @@ describe 'createrepo', :type => :define do
 
         it "updates repository" do
             should contain_cron("update-createrepo-#{title}").with({
-                'command' => "/usr/bin/createrepo --cachedir /var/cache/yumrepos/testyumrepo --update /var/yumrepos/testyumrepo",
+                'command' => "/usr/local/bin/createrepo-update-#{title}",
             })
         end
 
