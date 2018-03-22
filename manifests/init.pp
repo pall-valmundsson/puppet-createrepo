@@ -68,6 +68,12 @@
 #   Manage the repository directory. If false the repository and cache
 #   directories must be created manually/externally.
 #
+# [*cleanup*]
+#   Should the cron/script clean up old rpm versions for each rpm?
+#
+# [*cleanup_keep*]
+#   Set how many versions of each rpm to keep. Default: 2
+#
 # === Variables
 #
 # None.
@@ -109,7 +115,7 @@ define createrepo (
     $timeout              = 300,
     $manage_repo_dirs     = true,
     $cleanup              = false,
-    $cleanup_keep         = '2',
+    $cleanup_keep         = 2,
 ) {
     if $update_file_path != undef {
         $real_update_file_path = $update_file_path
@@ -152,6 +158,7 @@ define createrepo (
         }
     }
 
+    validate_bool($cleanup)
     if $cleanup and ! defined(Package['yum-utils']) {
         package { 'yum-utils':
             ensure => present,
