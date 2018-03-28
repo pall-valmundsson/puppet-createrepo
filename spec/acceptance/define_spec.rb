@@ -20,11 +20,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
     end
 
     describe cron do
-      if fact('osfamily') != 'RedHat'
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --update /var/yumrepos/test-repo').with_user('root') }
-      else
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo').with_user('root') }
-      end
+      it { should have_entry('*/10 * * * * /usr/local/bin/createrepo-update-test-repo').with_user('root') }
     end
 
     describe file('/usr/local/bin/createrepo-update-test-repo') do
@@ -59,11 +55,7 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
     end
 
     describe cron do
-      if fact('osfamily') != 'RedHat'
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --update /var/yumrepos/el6/test-repo').with_user('root') }
-      else
-        it { should have_entry('*/10 * * * * /usr/bin/createrepo --cachedir /var/cache/yumrepos/el6/test-repo --changelog-limit 5 --update /var/yumrepos/el6/test-repo').with_user('root') }
-      end
+      it { should have_entry('*/10 * * * * /usr/local/bin/createrepo-update-el6-test-repo').with_user('root') }
     end
 
     describe file('/usr/local/bin/createrepo-update-el6-test-repo') do

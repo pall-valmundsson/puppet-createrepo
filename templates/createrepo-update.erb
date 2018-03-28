@@ -5,4 +5,5 @@ if [ $(whoami) != '<%= @repo_owner %>' ]; then
     exit 1
 fi
 
+<%= %Q(#{@repomanage_cleanup}\n) if @cleanup -%>
 <%= @createrepo_update %>

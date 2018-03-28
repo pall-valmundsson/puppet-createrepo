@@ -34,7 +34,7 @@ RSpec.configure do |c|
             else
                 on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
             end
-            on host, puppet('module','install','puppetlabs-apache'), { :acceptable_exit_codes => [0,1] }
+            on host, puppet('module','install','puppetlabs-apache', '--version', '1.11.1'), { :acceptable_exit_codes => [0,1] }
             # Debian docker image doesn't contain cron
             apply_manifest_on host, 'package { "anacron": ensure => installed }' if fact('osfamily') == 'Debian'
         end

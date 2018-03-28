@@ -5,7 +5,11 @@ group :development, :test do
   gem "rspec-puppet",                       :require => false
   gem 'puppetlabs_spec_helper', '< 2.1.1',  :require => false
   gem 'puppet-lint',                        :require => false
-  gem 'metadata-json-lint',                 :require => false
+  if RUBY_VERSION =~ /^1\./
+    gem 'metadata-json-lint', '< 1.2',      :require => false
+  else
+    gem 'metadata-json-lint',               :require => false
+  end
   gem 'puppet-blacksmith',                  :require => false
 end
 

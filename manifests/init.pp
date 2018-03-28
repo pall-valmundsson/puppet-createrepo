@@ -68,6 +68,12 @@
 #   Manage the repository directory. If false the repository and cache
 #   directories must be created manually/externally.
 #
+# [*cleanup*]
+#   Should the cron/script clean up old rpm versions for each rpm?
+#
+# [*cleanup_keep*]
+#   Set how many versions of each rpm to keep. Default: 2
+#
 # === Variables
 #
 # None.
@@ -107,7 +113,9 @@ define createrepo (
     $groupfile            = undef,
     $workers              = undef,
     $timeout              = 300,
-    $manage_repo_dirs     = true
+    $manage_repo_dirs     = true,
+    $cleanup              = false,
+    $cleanup_keep         = 2,
 ) {
     if $update_file_path != undef {
         $real_update_file_path = $update_file_path
@@ -148,6 +156,16 @@ define createrepo (
         package { 'createrepo':
             ensure => present,
         }
+    }
+
+    validate_bool($cleanup)
+    if $cleanup {
+      if ! defined(Package['yum-utils']) {
+        package { 'yum-utils':
+            ensure => present,
+        }
+      }
+      Package['yum-utils'] -> File[$real_update_file_path]
     }
 
     case $::osfamily {
@@ -202,6 +220,7 @@ define createrepo (
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+    $repomanage_cleanup = "rm $(/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir})"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,
@@ -216,25 +235,6 @@ define createrepo (
         ],
     }
 
-    validate_bool($enable_cron)
-    if $enable_cron == true {
-        cron { "update-createrepo-${name}":
-            command => "${createrepo_update}${cron_output_suppression}",
-            user    => $repo_owner,
-            minute  => $cron_minute,
-            hour    => $cron_hour,
-            require => Exec["createrepo-${name}"],
-        }
-    } else {
-        exec { "update-createrepo-${name}":
-            command => $createrepo_update,
-            user    => $repo_owner,
-            group   => $repo_group,
-            timeout => $timeout,
-            require => Exec["createrepo-${name}"],
-        }
-    }
-
     validate_absolute_path($real_update_file_path)
     file { $real_update_file_path:
         ensure  => 'present',
@@ -242,5 +242,24 @@ define createrepo (
         group   => $repo_group,
         mode    => '0755',
         content => template('createrepo/createrepo-update.erb'),
+    }
+
+    validate_bool($enable_cron)
+    if $enable_cron == true {
+        cron { "update-createrepo-${name}":
+            command => "${real_update_file_path}${cron_output_suppression}",
+            user    => $repo_owner,
+            minute  => $cron_minute,
+            hour    => $cron_hour,
+            require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
+        }
+    } else {
+        exec { "update-createrepo-${name}":
+            command => $real_update_file_path,
+            user    => $repo_owner,
+            group   => $repo_group,
+            timeout => $timeout,
+            require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
+        }
     }
 }
