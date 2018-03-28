@@ -159,11 +159,13 @@ define createrepo (
     }
 
     validate_bool($cleanup)
-    if $cleanup and ! defined(Package['yum-utils']) {
+    if $cleanup {
+      if ! defined(Package['yum-utils']) {
         package { 'yum-utils':
             ensure => present,
-            before => File[$real_update_file_path],
         }
+      }
+      Package['yum-utils'] -> File[$real_update_file_path]
     }
 
     case $::osfamily {
