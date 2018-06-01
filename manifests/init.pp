@@ -238,7 +238,7 @@ define createrepo (
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
     $createrepo_create = "${createrepo_cmd} ${arg} --database ${repository_dir}"
     $createrepo_update = "${createrepo_cmd} ${arg} --update ${repository_dir}"
-    $repomanage_cleanup = "rm $(/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir})"
+    $repomanage_cleanup = "/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir} | /usr/bin/xargs -r rm"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,
