@@ -22,6 +22,7 @@ shared_examples "when using default parameters" do
             'mode'    => '0775',
             'recurse' => false,
             'seltype' => 'httpd_sys_content_t',
+            'before'  => 'Exec[createrepo-testyumrepo]',
         })
 
         should contain_file('/var/cache/yumrepos/testyumrepo').only_with({
@@ -30,6 +31,7 @@ shared_examples "when using default parameters" do
             'owner'  => 'root',
             'group'  => 'root',
             'mode'   => '0775',
+            'before'  => 'Exec[createrepo-testyumrepo]',
         })
     end
 
@@ -39,7 +41,7 @@ shared_examples "when using default parameters" do
             'user'    => 'root',
             'group'   => 'root',
             'creates' => "/var/yumrepos/testyumrepo/repodata",
-            'require' => ['Package[createrepo]', "File[/var/yumrepos/testyumrepo]", "File[/var/cache/yumrepos/testyumrepo]"]
+            'require' => 'Package[createrepo]'
         })
     end
 

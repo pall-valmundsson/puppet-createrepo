@@ -162,12 +162,14 @@ define createrepo (
             recurse => $repo_recurse,
             ignore  => $repo_ignore,
             seltype => $repo_seltype,
+            before  => Exec["createrepo-${name}"],
         }
         file { $repo_cache_dir:
             ensure => directory,
             owner  => $repo_owner,
             group  => $repo_group,
             mode   => '0775',
+            before => Exec["createrepo-${name}"],
         }
     }
 
@@ -246,11 +248,7 @@ define createrepo (
         group   => $repo_group,
         creates => "${repository_dir}/repodata",
         timeout => $timeout,
-        require => [
-            Package['createrepo'],
-            File[$repository_dir],
-            File[$repo_cache_dir],
-        ],
+        require => Package[$createrepo_package],
     }
 
     validate_absolute_path($real_update_file_path)
