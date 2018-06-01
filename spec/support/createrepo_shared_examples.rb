@@ -66,8 +66,37 @@ shared_examples "when using default parameters" do
         # The createrepo update command is :osfamily specific
         it "with correct user check" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                .with_content(/.*\$\(whoami\) != 'root'.*/) \
-                .with_content(/.*You really should be root.*/)
+                .with_content(/.*"\$\(whoami\)" != 'root'.*/) \
+                .with_content(/.*You really should be 'root'.*/)
+        end
+    end
+end
+
+shared_examples "when using createrepo_c package" do
+    let :params do
+        {
+            :createrepo_package => 'createrepo_c',
+            :createrepo_cmd => '/usr/bin/createrepo_c',
+        }
+    end
+
+    it "installs different package" do
+        should contain_package('createrepo_c')
+    end
+
+    it "creates repository" do
+        should contain_exec("createrepo-#{title}").with({
+            'user'    => 'root',
+            'group'   => 'root',
+            'creates' => "/var/yumrepos/testyumrepo/repodata",
+            'require' => 'Package[createrepo_c]'
+        })
+    end
+
+    describe "affects update script" do
+        it "contents" do
+            should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                .with_content(/.*\/usr\/bin\/createrepo_c.*/)
         end
     end
 end
@@ -190,8 +219,8 @@ shared_examples "when owner and group are provided"  do
         end
         it "contents" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                .with_content(/.*\$\(whoami\) != 'yumuser'.*/) \
-                .with_content(/.*You really should be yumuser.*/)
+                .with_content(/.*"\$\(whoami\)" != 'yumuser'.*/) \
+                .with_content(/.*You really should be 'yumuser'.*/)
         end
     end
 end

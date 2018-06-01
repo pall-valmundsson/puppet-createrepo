@@ -35,6 +35,7 @@ describe 'createrepo', :type => :define do
         end
 
         it_works_like "when using default parameters"
+        it_works_like "when using createrepo_c package"
         it_works_like "when owner and group are provided"
         it_works_like "when repository_dir and repository_cache_dir are provided"
         it_works_like "when enable_cron"

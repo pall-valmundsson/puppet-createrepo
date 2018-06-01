@@ -81,6 +81,14 @@
 # [*lockfile*]
 #   full path/name of the lockfile
 #
+# [*createrepo_package*]
+#   Select which createrepo package needs to be used. Allows to select createrepo_c
+#   instead of createrepo.
+#
+# [*createrepo_cmd*]
+#   The path of the createrepo binary to use. Allows, combined with setting 
+#   createrepo_package, to select /usr/bin/createrepo_c instead of /usr/bin/createrepo.
+#
 # === Variables
 #
 # None.
@@ -124,7 +132,9 @@ define createrepo (
     $cleanup              = false,
     $cleanup_keep         = 2,
     $use_lockfile         = false,
-    $lockfile             = "/tmp/createrepo-update-${name}.lock"
+    $lockfile             = "/tmp/createrepo-update-${name}.lock",
+    $createrepo_package   = 'createrepo',
+    $createrepo_cmd       = '/usr/bin/createrepo',
 ) {
     if $update_file_path != undef {
         $real_update_file_path = $update_file_path
@@ -161,8 +171,8 @@ define createrepo (
         }
     }
 
-    if ! defined(Package['createrepo']) {
-        package { 'createrepo':
+    if ! defined(Package[$createrepo_package]) {
+        package { $createrepo_package:
             ensure => present,
         }
     }
@@ -223,12 +233,11 @@ define createrepo (
       $_arg_workers = ''
     }
 
-    $cmd = '/usr/bin/createrepo'
     $_arg_cachedir = "--cachedir ${repo_cache_dir}"
     $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
-    $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
+    $createrepo_create = "${createrepo_cmd} ${arg} --database ${repository_dir}"
+    $createrepo_update = "${createrepo_cmd} ${arg} --update ${repository_dir}"
     $repomanage_cleanup = "rm $(/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir})"
 
     exec { "createrepo-${name}":
@@ -250,7 +259,7 @@ define createrepo (
         owner   => $repo_owner,
         group   => $repo_group,
         mode    => '0755',
-        content => template('createrepo/createrepo-update.erb'),
+        content => template('createrepo/createrepo-update.sh.erb'),
     }
 
     validate_bool($enable_cron)

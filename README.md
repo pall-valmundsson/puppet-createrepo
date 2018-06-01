@@ -208,6 +208,18 @@ full path/name of the lockfile
 
 - *Default*: `/tmp/createrepo-update-${name}.lock`
 
+### `createrepo_package`
+Name of the `createrepo` package and command to use. Can be used to use `/usr/bin/createrepo_c` instead of 
+`/usr/bin/createrepo`.
+
+- *Default*: `createrepo`
+
+### `createrepo_cmd`
+The path of the createrepo binary to use. Allows, combined with setting 
+`createrepo_package`, to select `/usr/bin/createrepo_c` instead of `/usr/bin/createrepo`.
+
+- *Default*: `/usr/bin/createrepo`
+
 ## Reference
 
 See [Usage](#usage)
