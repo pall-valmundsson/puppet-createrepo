@@ -118,9 +118,15 @@ Set the SELinux type for the repository directory.
 
 #### `enable_cron`
 
-Enable regular repository updates via cron. If `false` repositories will be updated on puppet runs.
+Enable regular repository updates via cron.
 
 - *Default*: `true`
+
+#### `enable_update`
+
+Enable automatic repository updates during the puppet run.
+
+- *Default*: `false`
 
 #### `cron_minute`
 
@@ -209,13 +215,13 @@ full path/name of the lockfile
 - *Default*: `/tmp/createrepo-update-${name}.lock`
 
 ### `createrepo_package`
-Name of the `createrepo` package and command to use. Can be used to use `/usr/bin/createrepo_c` instead of 
+Name of the `createrepo` package and command to use. Can be used to use `/usr/bin/createrepo_c` instead of
 `/usr/bin/createrepo`.
 
 - *Default*: `createrepo`
 
 ### `createrepo_cmd`
-The path of the createrepo binary to use. Allows, combined with setting 
+The path of the createrepo binary to use. Allows, combined with setting
 `createrepo_package`, to select `/usr/bin/createrepo_c` instead of `/usr/bin/createrepo`.
 
 - *Default*: `/usr/bin/createrepo`
