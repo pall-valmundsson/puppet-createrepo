@@ -280,6 +280,7 @@ define createrepo (
         }
     }
 
+    validate_bool($enable_update)
     if $enable_update {
         exec { "update-createrepo-${name}":
             command => $real_update_file_path,
