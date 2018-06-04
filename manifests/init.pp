@@ -40,6 +40,9 @@
 # [*cron_hour*]
 #   Hour parameter for cron metadata update job. Default: '*'
 #
+# [*cron_weekday*]
+#   Weekday parameter for cron metadata update job. Default '*'
+#
 # [*changelog_limit*]
 #   Import only last N changelog entries from rpm into metadata. Default: 5
 #
@@ -86,7 +89,7 @@
 #   instead of createrepo.
 #
 # [*createrepo_cmd*]
-#   The path of the createrepo binary to use. Allows, combined with setting 
+#   The path of the createrepo binary to use. Allows, combined with setting
 #   createrepo_package, to select /usr/bin/createrepo_c instead of /usr/bin/createrepo.
 #
 # === Variables
@@ -120,6 +123,7 @@ define createrepo (
     $enable_cron          = true,
     $cron_minute          = '*/10',
     $cron_hour            = '*',
+    $cron_weekday         = '*',
     $changelog_limit      = 5,
     $checksum_type        = undef,
     $update_file_path     = undef,
@@ -267,6 +271,7 @@ define createrepo (
             user    => $repo_owner,
             minute  => $cron_minute,
             hour    => $cron_hour,
+            weekday => $cron_weekday,
             require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
         }
     } else {

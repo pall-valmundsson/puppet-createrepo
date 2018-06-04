@@ -51,6 +51,7 @@ shared_examples "when using default parameters" do
             'user'    => 'root',
             'minute'  => '*/10',
             'hour'    => '*',
+            'weekday' => '*',
             'require' => ["Exec[createrepo-#{title}]", "File[/usr/local/bin/createrepo-update-#{title}]"]
         })
     end
@@ -136,6 +137,7 @@ shared_examples "when name contains slashes" do
             'user'    => 'root',
             'minute'  => '*/10',
             'hour'    => '*',
+            'weekday' => '*',
             'require' => ["Exec[createrepo-el7/common]", 'File[/usr/local/bin/createrepo-update-el7-common]']
         })
     end
@@ -322,6 +324,7 @@ shared_examples "when enable_cron" do
                 'user'    => 'root',
                 'minute'  => '*/10',
                 'hour'    => '*',
+                'weekday' => '*',
                 'require' => ["Exec[createrepo-#{title}]", "File[/usr/local/bin/createrepo-update-#{title}]"]
             })
         end
@@ -331,8 +334,9 @@ end
 shared_examples "when cron schedule is modified" do
     let :params do
         {
-            :cron_minute => '30',
-            :cron_hour   => '5',
+            :cron_minute  => '30',
+            :cron_hour    => '5',
+            :cron_weekday => '3',
         }
     end
 
@@ -340,6 +344,7 @@ shared_examples "when cron schedule is modified" do
         should contain_cron("update-createrepo-#{title}").with({
             'minute'  => '30',
             'hour'    => '5',
+            'weekday' => '3',
         })
     end
 end
