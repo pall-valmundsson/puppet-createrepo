@@ -36,6 +36,29 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
     end
   end
 
+  if fact('osfamily') == 'RedHat' and fact('operatingsystemmajrelease') == '7'
+    context 'with createrepo_c package:' do
+      it 'should work with no errors' do
+        pp = <<-EOS
+          file { '/var/yumrepos': ensure => directory, }
+          file { '/var/cache/yumrepos': ensure => directory, }
+          createrepo { 'test-repo': createrepo_package => 'createrepo_c', createrepo_cmd => '/usr/bin/createrepo_c', }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
+      end
+
+      describe file('/usr/local/bin/createrepo-update-test-repo') do
+        it { should be_file }
+        it { should be_mode '755' }
+        it { should be_owned_by 'root' }
+        it { should be_grouped_into 'root' }
+        it { should contain '/usr/bin/createrepo_c --cachedir /var/cache/yumrepos/test-repo --changelog-limit 5 --update /var/yumrepos/test-repo' }
+      end
+    end
+  end
+
   context 'with slash in repo name:' do
     it 'should work with no errors' do
       pp = <<-EOS

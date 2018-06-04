@@ -35,6 +35,7 @@ describe 'createrepo', :type => :define do
         end
 
         it_works_like "when using default parameters"
+        it_works_like "when using createrepo_c package"
         it_works_like "when owner and group are provided"
         it_works_like "when repository_dir and repository_cache_dir are provided"
         it_works_like "when enable_cron"
@@ -50,6 +51,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when update_file_path is provided"
         it_works_like "when name contains slashes"
         it_works_like "when repo directory recurse is changed and ignore is used"
+        it_works_like "when use_lockfile"
 
         context "works with changelog limit modifications" do
             let :params do
@@ -110,6 +112,7 @@ describe 'createrepo', :type => :define do
         it_works_like "when update_file_path is provided"
         it_works_like "when name contains slashes"
         it_works_like "when repo directory recurse is changed and ignore is used"
+        it_works_like "when use_lockfile"
 
         context "works with changelog limit modifications" do
             let :params do

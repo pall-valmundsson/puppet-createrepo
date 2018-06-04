@@ -22,6 +22,7 @@ shared_examples "when using default parameters" do
             'mode'    => '0775',
             'recurse' => false,
             'seltype' => 'httpd_sys_content_t',
+            'before'  => 'Exec[createrepo-testyumrepo]',
         })
 
         should contain_file('/var/cache/yumrepos/testyumrepo').only_with({
@@ -30,6 +31,7 @@ shared_examples "when using default parameters" do
             'owner'  => 'root',
             'group'  => 'root',
             'mode'   => '0775',
+            'before'  => 'Exec[createrepo-testyumrepo]',
         })
     end
 
@@ -39,7 +41,7 @@ shared_examples "when using default parameters" do
             'user'    => 'root',
             'group'   => 'root',
             'creates' => "/var/yumrepos/testyumrepo/repodata",
-            'require' => ['Package[createrepo]', "File[/var/yumrepos/testyumrepo]", "File[/var/cache/yumrepos/testyumrepo]"]
+            'require' => 'Package[createrepo]'
         })
     end
 
@@ -66,8 +68,37 @@ shared_examples "when using default parameters" do
         # The createrepo update command is :osfamily specific
         it "with correct user check" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                .with_content(/.*\$\(whoami\) != 'root'.*/) \
-                .with_content(/.*You really should be root.*/)
+                .with_content(/.*"\$\(whoami\)" != 'root'.*/) \
+                .with_content(/.*You really should be 'root'.*/)
+        end
+    end
+end
+
+shared_examples "when using createrepo_c package" do
+    let :params do
+        {
+            :createrepo_package => 'createrepo_c',
+            :createrepo_cmd => '/usr/bin/createrepo_c',
+        }
+    end
+
+    it "installs different package" do
+        should contain_package('createrepo_c')
+    end
+
+    it "creates repository" do
+        should contain_exec("createrepo-#{title}").with({
+            'user'    => 'root',
+            'group'   => 'root',
+            'creates' => "/var/yumrepos/testyumrepo/repodata",
+            'require' => 'Package[createrepo_c]'
+        })
+    end
+
+    describe "affects update script" do
+        it "contents" do
+            should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                .with_content(/.*\/usr\/bin\/createrepo_c.*/)
         end
     end
 end
@@ -190,8 +221,8 @@ shared_examples "when owner and group are provided"  do
         end
         it "contents" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
-                .with_content(/.*\$\(whoami\) != 'yumuser'.*/) \
-                .with_content(/.*You really should be yumuser.*/)
+                .with_content(/.*"\$\(whoami\)" != 'yumuser'.*/) \
+                .with_content(/.*You really should be 'yumuser'.*/)
         end
     end
 end
@@ -250,6 +281,18 @@ shared_examples "when repository_dir and repository_cache_dir are provided" do
         it "contents" do
             should contain_file("/usr/local/bin/createrepo-update-#{title}") \
                 .with_content(/.*\/usr\/bin\/createrepo.*--cachedir \/var\/cache\/myrepos\/repo1.* --update \/var\/myrepos\/repo1.*/)
+        end
+    end
+end
+
+shared_examples "when use_lockfile" do
+    context "is true" do
+        let :params do
+            { :use_lockfile => true }
+        end
+        it "contents update exec" do
+            should contain_file("/usr/local/bin/createrepo-update-#{title}") \
+                .with_content(/.*flock -e.*/)
         end
     end
 end

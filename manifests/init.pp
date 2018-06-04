@@ -74,6 +74,21 @@
 # [*cleanup_keep*]
 #   Set how many versions of each rpm to keep. Default: 2
 #
+# [*use_lockfile*]
+#   Prevents corruption of the repodata, when multiple createrepo processes
+#   start building repodata at the same time. (eg in combination with incrond)
+#
+# [*lockfile*]
+#   full path/name of the lockfile
+#
+# [*createrepo_package*]
+#   Select which createrepo package needs to be used. Allows to select createrepo_c
+#   instead of createrepo.
+#
+# [*createrepo_cmd*]
+#   The path of the createrepo binary to use. Allows, combined with setting 
+#   createrepo_package, to select /usr/bin/createrepo_c instead of /usr/bin/createrepo.
+#
 # === Variables
 #
 # None.
@@ -116,6 +131,10 @@ define createrepo (
     $manage_repo_dirs     = true,
     $cleanup              = false,
     $cleanup_keep         = 2,
+    $use_lockfile         = false,
+    $lockfile             = "/tmp/createrepo-update-${name}.lock",
+    $createrepo_package   = 'createrepo',
+    $createrepo_cmd       = '/usr/bin/createrepo',
 ) {
     if $update_file_path != undef {
         $real_update_file_path = $update_file_path
@@ -143,17 +162,19 @@ define createrepo (
             recurse => $repo_recurse,
             ignore  => $repo_ignore,
             seltype => $repo_seltype,
+            before  => Exec["createrepo-${name}"],
         }
         file { $repo_cache_dir:
             ensure => directory,
             owner  => $repo_owner,
             group  => $repo_group,
             mode   => '0775',
+            before => Exec["createrepo-${name}"],
         }
     }
 
-    if ! defined(Package['createrepo']) {
-        package { 'createrepo':
+    if ! defined(Package[$createrepo_package]) {
+        package { $createrepo_package:
             ensure => present,
         }
     }
@@ -214,13 +235,12 @@ define createrepo (
       $_arg_workers = ''
     }
 
-    $cmd = '/usr/bin/createrepo'
     $_arg_cachedir = "--cachedir ${repo_cache_dir}"
     $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
     $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
-    $createrepo_create = "${cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${cmd} ${arg} --update ${repository_dir}"
-    $repomanage_cleanup = "rm $(/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir})"
+    $createrepo_create = "${createrepo_cmd} ${arg} --database ${repository_dir}"
+    $createrepo_update = "${createrepo_cmd} ${arg} --update ${repository_dir}"
+    $repomanage_cleanup = "/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir} | /usr/bin/xargs -r rm"
 
     exec { "createrepo-${name}":
         command => $createrepo_create,
@@ -228,11 +248,7 @@ define createrepo (
         group   => $repo_group,
         creates => "${repository_dir}/repodata",
         timeout => $timeout,
-        require => [
-            Package['createrepo'],
-            File[$repository_dir],
-            File[$repo_cache_dir],
-        ],
+        require => Package[$createrepo_package],
     }
 
     validate_absolute_path($real_update_file_path)
@@ -241,7 +257,7 @@ define createrepo (
         owner   => $repo_owner,
         group   => $repo_group,
         mode    => '0755',
-        content => template('createrepo/createrepo-update.erb'),
+        content => template('createrepo/createrepo-update.sh.erb'),
     }
 
     validate_bool($enable_cron)
