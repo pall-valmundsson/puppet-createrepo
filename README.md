@@ -25,6 +25,8 @@
 
 The createrepo module allows you to create and update yum repositories.
 
+*Breaking changes*: Version 3.0.0 changes the `enable_cron` setting. If set to `false` the cron job will not be created and an update _will not be performed on agent runs_. An option to update on agent runs `enable_update` is introduced to re-enable this functionality. If you were setting `enable_cron` to `false` then you need to set `enable_update` to `true` to maintain the same functionality.
+
 ## Module Description
 
 Yum repositories are a distribution method for RPM packages usually served via HTTP. The createrepo module creates yum repositories and it's metadata caches.
