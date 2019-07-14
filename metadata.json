@@ -1,6 +1,6 @@
 {
   "name": "palli-createrepo",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "author": "Pall Valmundsson",
   "summary": "Manages creation of yum repositories",
   "license": "GPL-3.0+",
@@ -12,6 +12,9 @@
     "repository",
     "yum",
     "createrepo"
+  ],
+  "requirements": [
+    {"name": "puppet", "version_requirement": ">= 3.8.0 < 6.0.0"}
   ],
   "operatingsystem_support": [
     {

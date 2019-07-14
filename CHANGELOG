@@ -1,5 +1,6 @@
 Unreleased - Version 3.0.0
 *BREAKING* Support disabling both cron job and updates on puppet runs (#38)
+* Remove upper limit of stdlib dependency (#39 and #42)
 * Add support for weekdays in cron (#37)
 * Enable the use of createrepo_c (#36)
 * Add lockfile support to limit concurrent update script runs (#36)
