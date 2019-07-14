@@ -16,6 +16,7 @@ end
 group :system_tests do
   gem 'beaker',                  :require => false
   gem 'beaker-rspec',            :require => false
+  gem 'beaker-docker',           :require => false
   gem 'serverspec',              :require => false
 end
 
