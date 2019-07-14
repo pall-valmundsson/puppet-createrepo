@@ -94,38 +94,6 @@ describe 'createrepo define:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
     end
   end
 
-  context 'with apache configuration:' do
-    it 'should work with no errors' do
-      pp = <<-EOS
-        file { '/var/yumrepos': ensure => directory, }
-        file { '/var/cache/yumrepos': ensure => directory, }
-        createrepo { 'test-repo':
-          repository_dir => '/var/yumrepos/test-repo',
-          repo_cache_dir => '/var/cache/yumrepos/test-repo',
-        }
-        include apache
-        apache::vhost { 'yum':
-          port          => 80,
-          docroot       => '/var/yumrepos',
-          docroot_owner => 'root',
-          docroot_group => 'root',
-          serveraliases => ['yum.foo.local'],
-        }
-        host { 'yum.foo.local': ip => '127.0.0.1', }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true, :future_parser => FUTURE_PARSER).exit_code).to be_zero
-    end
-
-    it 'repodata should be accessible via http' do
-      shell("/usr/bin/curl yum.foo.local:80/test-repo/repodata/") do |r|
-        expect(r.stdout).to match(/primary.xml/)
-        expect(r.exit_code).to be_zero
-      end
-    end
-  end
-
   context 'with mixed owner/group and recurse set and ignore on repodata directory' do
     it 'should not affect the repodata directory' do
       pp = <<-EOS
