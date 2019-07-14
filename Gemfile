@@ -14,9 +14,8 @@ group :development, :test do
 end
 
 group :system_tests do
-  gem 'beaker',                  :require => false
+  gem 'beaker', '< 4.0'          :require => false
   gem 'beaker-rspec',            :require => false
-  gem 'beaker-docker',           :require => false
   gem 'serverspec',              :require => false
 end
 
