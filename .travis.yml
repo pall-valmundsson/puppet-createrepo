@@ -20,7 +20,6 @@ env:
     - CHECK="ci" PUPPET_GEM_VERSION="~> 4.0"
     - CHECK="ci" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
     - CHECK="ci" PUPPET_GEM_VERSION="~> 5.0"
-    - CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
   include:
@@ -64,6 +63,10 @@ matrix:
       env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
     - rvm: 2.3.3
       env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
+    - rvm: 2.5.3
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0"
+    - rvm: 2.5.3
+      env: CHECK="ci" PUPPET_GEM_VERSION="~> 3.8.0" FUTURE_PARSER="yes" STRICT_VARIABLES="yes"
     - rvm: 1.9.3
       env: CHECK="ci" PUPPET_GEM_VERSION="~> 5.0"
     - rvm: 2.0.0
@@ -74,16 +77,6 @@ matrix:
       env: CHECK="ci" PUPPET_GEM_VERSION="~> 5.0"
     - rvm: 2.3.3
       env: CHECK="ci" PUPPET_GEM_VERSION="~> 5.0"
-    - rvm: 1.9.3
-      env: CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
-    - rvm: 2.0.0
-      env: CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
-    - rvm: 2.1.7
-      env: CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
-    - rvm: 2.2.6
-      env: CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
-    - rvm: 2.3.3
-      env: CHECK="ci" PUPPET_GEM_VERSION="~> 6.0"
 notifications:
   email: false
 gemfile: Gemfile
