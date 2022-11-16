@@ -283,11 +283,12 @@ define createrepo (
     validate_bool($enable_update)
     if $enable_update {
         exec { "update-createrepo-${name}":
-            command => $real_update_file_path,
-            user    => $repo_owner,
-            group   => $repo_group,
-            timeout => $timeout,
-            require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
+            command     => $real_update_file_path,
+            user        => $repo_owner,
+            group       => $repo_group,
+            timeout     => $timeout,
+            refreshonly => true,
+            require     => [Exec["createrepo-${name}"], File[$real_update_file_path]],
         }
     }
 }
