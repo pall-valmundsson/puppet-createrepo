@@ -115,179 +115,160 @@
 # Copyright 2012-2017 Páll Valmundsson, unless otherwise noted.
 #
 define createrepo (
-    $repository_dir       = "/var/yumrepos/${name}",
-    $repo_cache_dir       = "/var/cache/yumrepos/${name}",
-    $repo_owner           = 'root',
-    $repo_group           = 'root',
-    $repo_mode            = '0775',
-    $repo_recurse         = false,
-    $repo_ignore          = undef,
-    $repo_seltype         = 'httpd_sys_content_t',
-    $enable_cron          = true,
-    $enable_update        = false,
-    $cron_minute          = '*/10',
-    $cron_hour            = '*',
-    $cron_weekday         = '*',
-    $changelog_limit      = 5,
-    $checksum_type        = undef,
-    $update_file_path     = undef,
-    $suppress_cron_stdout = false,
-    $suppress_cron_stderr = false,
-    $groupfile            = undef,
-    $workers              = undef,
-    $timeout              = 300,
-    $manage_repo_dirs     = true,
-    $cleanup              = false,
-    $cleanup_keep         = 2,
-    $use_lockfile         = false,
-    $lockfile             = "/tmp/createrepo-update-${name}.lock",
-    $createrepo_package   = 'createrepo',
-    $createrepo_cmd       = '/usr/bin/createrepo',
+  Stdlib::Unixpath $repository_dir             = "/var/yumrepos/${name}",
+  Stdlib::Unixpath $repo_cache_dir             = "/var/cache/yumrepos/${name}",
+  String $repo_owner                           = 'root',
+  String $repo_group                           = 'root',
+  String $repo_mode                            = '0775',
+  Boolean $repo_recurse                        = false,
+  String $repo_seltype                         = 'httpd_sys_content_t',
+  Boolean $enable_cron                         = true,
+  Boolean $enable_update                       = false,
+  String $cron_minute                          = '*/10',
+  String $cron_hour                            = '*',
+  String $cron_weekday                         = '*',
+  Integer $changelog_limit                     = 5,
+  Boolean $suppress_cron_stdout                = false,
+  Boolean $suppress_cron_stderr                = false,
+  Integer $timeout                             = 300,
+  Boolean $manage_repo_dirs                    = true,
+  Boolean $cleanup                             = false,
+  Integer $cleanup_keep                        = 2,
+  Boolean $use_lockfile                        = false,
+  Stdlib::Unixpath $lockfile                   = "/tmp/createrepo-update-${name}.lock",
+  String $createrepo_package                   = 'createrepo',
+  Stdlib::Unixpath $createrepo_cmd             = '/usr/bin/createrepo',
+  Optional[Boolean] $repo_ignore               = undef,
+  Optional[String[1]] $checksum_type           = undef,
+  Optional[Stdlib::Unixpath] $update_file_path = undef,
+  Optional[String[1]] $groupfile               = undef,
+  Optional[Integer] $workers                   = undef,
 ) {
-    if $update_file_path != undef {
-        $real_update_file_path = $update_file_path
-    }
-    else {
-        $adjusted_name = regsubst($name, '/', '-', 'G')
-        $real_update_file_path = "/usr/local/bin/createrepo-update-${adjusted_name}"
-    }
-    validate_absolute_path($repository_dir)
-    validate_absolute_path($repo_cache_dir)
-    validate_string($repo_owner)
-    validate_string($repo_group)
-    unless is_integer($timeout) {
-        fail('timeout is not an integer')
-    }
+  if $update_file_path != undef {
+    $real_update_file_path = $update_file_path
+  }
+  else {
+    $adjusted_name = regsubst($name, '/', '-', 'G')
+    $real_update_file_path = "/usr/local/bin/createrepo-update-${adjusted_name}"
+  }
 
-
-    validate_bool($manage_repo_dirs)
-    if $manage_repo_dirs {
-        file { $repository_dir:
-            ensure  => directory,
-            owner   => $repo_owner,
-            group   => $repo_group,
-            mode    => $repo_mode,
-            recurse => $repo_recurse,
-            ignore  => $repo_ignore,
-            seltype => $repo_seltype,
-            before  => Exec["createrepo-${name}"],
-        }
-        file { $repo_cache_dir:
-            ensure => directory,
-            owner  => $repo_owner,
-            group  => $repo_group,
-            mode   => '0775',
-            before => Exec["createrepo-${name}"],
-        }
+  if $manage_repo_dirs {
+    file { $repository_dir:
+      ensure  => directory,
+      owner   => $repo_owner,
+      group   => $repo_group,
+      mode    => $repo_mode,
+      recurse => $repo_recurse,
+      ignore  => $repo_ignore,
+      seltype => $repo_seltype,
+      before  => Exec["createrepo-${name}"],
     }
-
-    if ! defined(Package[$createrepo_package]) {
-        package { $createrepo_package:
-            ensure => present,
-        }
+    file { $repo_cache_dir:
+      ensure => directory,
+      owner  => $repo_owner,
+      group  => $repo_group,
+      mode   => '0775',
+      before => Exec["createrepo-${name}"],
     }
+  }
 
-    validate_bool($cleanup)
-    if $cleanup {
-      if ! defined(Package['yum-utils']) {
-        package { 'yum-utils':
-            ensure => present,
-        }
+  if ! defined(Package[$createrepo_package]) {
+    package { $createrepo_package:
+      ensure => present,
+    }
+  }
+
+  if $cleanup {
+    if ! defined(Package['yum-utils']) {
+      package { 'yum-utils':
+        ensure => present,
       }
-      Package['yum-utils'] -> File[$real_update_file_path]
     }
+    Package['yum-utils'] -> File[$real_update_file_path]
+  }
 
-    case $::osfamily {
-        'RedHat':{
-            if is_integer($changelog_limit) {
-                $_arg_changelog = " --changelog-limit ${changelog_limit}"
-            } else {
-                $_arg_changelog = ''
-            }
+  case $facts['os']['family'] {
+    'RedHat': {
+      $_arg_changelog = " --changelog-limit ${changelog_limit}"
 
-            if $checksum_type {
-                $_arg_checksum = " --checksum ${checksum_type}"
-            } else {
-                $_arg_checksum = ''
-            }
-        }
-        default:{
-            # createrepo distributed with some OS don't have these options
-            $_arg_checksum  = ''
-            $_arg_changelog = ''
-        }
+      if $checksum_type {
+        $_arg_checksum = " --checksum ${checksum_type}"
+      } else {
+        $_arg_checksum = ''
+      }
     }
-
-    validate_bool($suppress_cron_stdout, $suppress_cron_stderr)
-    if $suppress_cron_stdout {
-        $_stdout_suppress = ' 1>/dev/null'
-    } else {
-        $_stdout_suppress = ''
+    default: {
+      # createrepo distributed with some OS don't have these options
+      $_arg_checksum  = ''
+      $_arg_changelog = ''
     }
-    if $suppress_cron_stderr {
-        $_stderr_suppress = ' 2>/dev/null'
-    } else {
-        $_stderr_suppress = ''
-    }
+  }
 
-    if $groupfile {
-        validate_string($groupfile)
-        $_arg_groupfile = " --groupfile ${groupfile}"
-    } else {
-        $_arg_groupfile = ''
-    }
+  if $suppress_cron_stdout {
+    $_stdout_suppress = ' 1>/dev/null'
+  } else {
+    $_stdout_suppress = ''
+  }
+  if $suppress_cron_stderr {
+    $_stderr_suppress = ' 2>/dev/null'
+  } else {
+    $_stderr_suppress = ''
+  }
 
-    if $workers {
-      $_arg_workers = " --workers ${workers}"
-    } else {
-      $_arg_workers = ''
-    }
+  if $groupfile {
+    $_arg_groupfile = " --groupfile ${groupfile}"
+  } else {
+    $_arg_groupfile = ''
+  }
 
-    $_arg_cachedir = "--cachedir ${repo_cache_dir}"
-    $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
-    $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
-    $createrepo_create = "${createrepo_cmd} ${arg} --database ${repository_dir}"
-    $createrepo_update = "${createrepo_cmd} ${arg} --update ${repository_dir}"
-    $repomanage_cleanup = "/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir} | /usr/bin/xargs -r rm"
+  if $workers {
+    $_arg_workers = " --workers ${workers}"
+  } else {
+    $_arg_workers = ''
+  }
 
-    exec { "createrepo-${name}":
-        command => $createrepo_create,
-        user    => $repo_owner,
-        group   => $repo_group,
-        creates => "${repository_dir}/repodata",
-        timeout => $timeout,
-        require => Package[$createrepo_package],
-    }
+  $_arg_cachedir = "--cachedir ${repo_cache_dir}"
+  $arg = "${_arg_cachedir}${_arg_changelog}${_arg_checksum}${_arg_groupfile}${_arg_workers}"
+  $cron_output_suppression = "${_stdout_suppress}${_stderr_suppress}"
+  $createrepo_create = "${createrepo_cmd} ${arg} --database ${repository_dir}"
+  $createrepo_update = "${createrepo_cmd} ${arg} --update ${repository_dir}"
+  $repomanage_cleanup = "/usr/bin/repomanage --keep=${cleanup_keep} --old ${repository_dir} | /usr/bin/xargs -r rm"
 
-    validate_absolute_path($real_update_file_path)
-    file { $real_update_file_path:
-        ensure  => 'present',
-        owner   => $repo_owner,
-        group   => $repo_group,
-        mode    => '0755',
-        content => template('createrepo/createrepo-update.sh.erb'),
-    }
+  exec { "createrepo-${name}":
+    command => $createrepo_create,
+    user    => $repo_owner,
+    group   => $repo_group,
+    creates => "${repository_dir}/repodata",
+    timeout => $timeout,
+    require => Package[$createrepo_package],
+  }
 
-    validate_bool($enable_cron)
-    if $enable_cron == true {
-        cron { "update-createrepo-${name}":
-            command => "${real_update_file_path}${cron_output_suppression}",
-            user    => $repo_owner,
-            minute  => $cron_minute,
-            hour    => $cron_hour,
-            weekday => $cron_weekday,
-            require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
-        }
-    }
+  file { $real_update_file_path:
+    ensure  => file,
+    owner   => $repo_owner,
+    group   => $repo_group,
+    mode    => '0755',
+    content => template('createrepo/createrepo-update.sh.erb'),
+  }
 
-    validate_bool($enable_update)
-    if $enable_update {
-        exec { "update-createrepo-${name}":
-            command => $real_update_file_path,
-            user    => $repo_owner,
-            group   => $repo_group,
-            timeout => $timeout,
-            require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
-        }
+  if $enable_cron == true {
+    cron { "update-createrepo-${name}":
+      command => "${real_update_file_path}${cron_output_suppression}",
+      user    => $repo_owner,
+      minute  => $cron_minute,
+      hour    => $cron_hour,
+      weekday => $cron_weekday,
+      require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
     }
+  }
+
+  if $enable_update {
+    exec { "update-createrepo-${name}":
+      command => $real_update_file_path,
+      user    => $repo_owner,
+      group   => $repo_group,
+      timeout => $timeout,
+      require => [Exec["createrepo-${name}"], File[$real_update_file_path]],
+    }
+  }
 }
